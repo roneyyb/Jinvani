@@ -1,12 +1,9 @@
 import React, {Component} from "react";
 import {View, Image, StyleSheet} from "react-native";
 import JainSymbol from "../../icons/jain_symbol.png";
-//import WrappedTextInput from "./components/WrappedTextInput";
-import Button from "./components/WrappedRectangleButton";
-import Loader from "./components/Loader";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { Input } from "react-native-elements";
-
+import {WrappedRectangleButton, Loader} from "../../components/index";
+import {Input} from "react-native-elements";
+//import WrappedTextInput from "./components/WrappedTextInput";ents";
 
 class Login extends Component {
     state = {
@@ -18,27 +15,29 @@ class Login extends Component {
 
     sendDetailsToServer = (phone) => {
         this.props.navigation.navigate("otpScreen");
-    }
+    };
 
     setLoader = () => {
         this.setState((prevState) => {
             return {
-                isLoading:!prevState.isLoading
-            }
-        })
-    }
+                isLoading: !prevState.isLoading,
+            };
+        });
+    };
 
     onSubmit = () => {
-        const { phoneNumber } = this.state;
+        const {phoneNumber} = this.state;
         let flag = 0;
         const phoneValidation = /^[1-9]{1}[0-9]{9}$/;
         if (!phoneValidation.test(phoneNumber)) {
-            this.setState({phoneNumberError:"Please enter valid phone number."})
+            this.setState({
+                phoneNumberError: "Please enter valid phone number.",
+            });
         } else {
-            this.setState({phoneNumberError:""})
+            this.setState({phoneNumberError: ""});
             this.sendDetailsToServer(phoneNumber);
         }
-    }
+    };
 
     render() {
         const {isLoading, phoneNumber, phoneNumberError} = this.state;
@@ -65,13 +64,15 @@ class Login extends Component {
                             }}
                         />
                         <View style={styles.buttonContainer}>
-                            <Button
-                                buttonStyle={styles.buttonStyle}
-                                buttonText={"Submit"}
-                                textStyle={styles.textStyle}
+                            <WrappedRectangleButton
                                 onPress={() => {
-                                    this.onSubmit();
+                                    this.props.navigation.navigate("login");
                                 }}
+                                backgroundColor={"#5000611A"}
+                                textColor={"#500061"}
+                                opacity={1}
+                                elevation={0}
+                                buttonText={"Sign In"}
                             />
                         </View>
                     </View>
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         position: "absolute",
         bottom: 0,
-        right:0
+        right: 0,
     },
     textStyle: {
         color: "#FFFFFF",

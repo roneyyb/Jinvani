@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
 import OTPTextInput from "react-native-otp-textinput";
-import Button from "./components/WrappedRectangleButton";
-import Loader from "./components/Loader";
+import Button from "../../components/WrappedRectangleButton";
+import Loader from "../../components/Loader";
+
 //import axios from "axios";
 //import {apiEndPoint} from "../../constants/server";
 
@@ -10,7 +11,7 @@ class Otp extends Component {
     state = {
         otp: "",
         otpError: "",
-        timer: 60,
+        timer: 5,
         isLoading: false,
         fetchError: "",
     };
@@ -82,6 +83,11 @@ class Otp extends Component {
     //         });
     // };
 
+    resendOtp = () => {
+        this.setState({timer: 5});
+        this.setTimerForOTP();
+    };
+
     checkInput = () => {
         const {otp} = this.state;
         if (otp.length < 6) {
@@ -91,7 +97,7 @@ class Otp extends Component {
         }
     };
     componentDidMount() {
-        //this.setTimerForOTP();
+        this.setTimerForOTP();
         //this.sendMail();
     }
 
@@ -111,7 +117,7 @@ class Otp extends Component {
                     </Text>
                     <Text style={styles.subHeadingStyle}>
                         {
-                            "An OTP is sent to you phone number. Please enter that OTP to login."
+                            "An OTP has been sent to you phone number. Please enter that OTP to login."
                         }
                     </Text>
                     <View style={{paddingHorizontal: 30, marginTop: 100}}>
@@ -138,7 +144,9 @@ class Otp extends Component {
                         <Text
                             style={styles.otpText}
                             onPress={() => {
-                                this.sendMail();
+                                if (this.state.timer == 0) {
+                                    this.resendOtp();
+                                }
                             }}
                         >
                             {`Resend OTP`}
@@ -155,12 +163,14 @@ class Otp extends Component {
                     </View>
                     <View style={styles.buttonContainer}>
                         <Button
-                            buttonStyle={styles.buttonStyle}
-                            buttonText={"Submit"}
-                            textStyle={styles.textStyle}
                             onPress={() => {
-                                //this.checkInput();
+                                this.props.navigation.navigate("login");
                             }}
+                            backgroundColor={"#5000611A"}
+                            textColor={"#500061"}
+                            opacity={1}
+                            elevation={0}
+                            buttonText={"Sign In"}
                         />
                     </View>
                 </View>
@@ -173,7 +183,7 @@ class Otp extends Component {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        backgroundColor:"#ffffff",
+        backgroundColor: "#ffffff",
         paddingTop: 34,
         paddingHorizontal: "5%",
     },
@@ -201,7 +211,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: 80,
         borderRadius: 12,
-        backgroundColor:"#EF8B31"
+        backgroundColor: "#EF8B31",
     },
     buttonContainer: {
         position: "absolute",
