@@ -28,14 +28,23 @@ const Auth = () => {
 };
 
 const Drawer = createDrawerNavigator();
-export default function App() {
+const DrawerNavigator = () => {
     return (
         <Drawer.Navigator drawerContent={(props) => <SideMenu {...props} />}>
-            <Drawer.Screen name="Audio" component={Auth} />
+            <Drawer.Screen name="Audio" component={Audio} />
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Feedback" component={Feedback} />
             <Drawer.Screen name="Faq" component={Faq} />
             <Drawer.Screen name="Contactus" component={Contactus} />
         </Drawer.Navigator>
+    );
+};
+
+export default function App() {
+    return (
+        <Stack.Navigator initialRouteName={"Auth"} headerMode={"none"}>
+            <Stack.Screen name="Auth" component={Auth} />
+            <Stack.Screen name="Drawer" component={DrawerNavigator} />
+        </Stack.Navigator>
     );
 }
