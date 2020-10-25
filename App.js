@@ -5,7 +5,9 @@ import {NavigationContainer} from "@react-navigation/native";
 import Navigator from "./src/navigation/stack";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {Provider} from "react-redux";
-import configureStore form "./src/"
+import configureStore from "./src/store";
+
+const store = configureStore();
 
 export default function App() {
     return (
