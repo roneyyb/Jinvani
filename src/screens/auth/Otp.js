@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
 import OTPTextInput from "react-native-otp-textinput";
-import Button from "../../components/WrappedRectangleButton";
-import Loader from "../../components/Loader";
+import Button from "../components/WrappedRectangleButton";
+import Loader from "../components/Loader";
 
 //import axios from "axios";
 //import {apiEndPoint} from "../../constants/server";

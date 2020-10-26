@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     Image,
 } from "react-native";
-import {globalHeight, fs15} from "../constants/Dimensions";
+import {globalHeight, fs15} from "../../constants/Dimensions";
 import Icon from "react-native-vector-icons/Feather";
 
 export default class WrappedTextInput extends Component {

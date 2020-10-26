@@ -1,0 +1,654 @@
+{
+	"info": {
+		"_postman_id": "6f9d8e61-bd13-48f8-949e-9d8f83c538ea",
+		"name": "Jinvani App V1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OTP",
+			"item": [
+				{
+					"name": "Send OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "15223f5a-6c16-4eba-96a6-dc2075e84b04",
+								"exec": [
+									"pm.test(`Status Code, \"200\"`, ()=>{",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(`\"OK\", OTP send successfully`, ()=>{",
+									"    pm.expect(jsonData.msg).to.eql(\"OK\");",
+									"    pm.expect(jsonData.data).to.eql(\"OTP SENT\");",
+									"});",
+									"",
+									"//setting headers in env variable use in the otp verification",
+									"pm.environment.set(\"x-auth-token\", pm.response.headers.get(\"x-auth-token\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "mobileNo",
+									"value": "8930154773",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{testingHost}}/v1/otp/send",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"otp",
+								"send"
+							]
+						},
+						"description": "Send OTP to mobile no of user"
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1376e36d-7c4d-475c-a4a8-f685d15a8c7e",
+								"exec": [
+									"pm.test(`Status Code, \"200\"`, ()=>{",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(`\"OK\", OTP confirmed successfully`, ()=>{",
+									"    pm.expect(jsonData.msg).to.eql(\"OK\");",
+									"});",
+									"",
+									"//setting headers in env variable use in the otp verification",
+									"pm.environment.set(\"x-auth-token\", pm.response.headers.get(\"x-auth-token\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "otpNumber",
+									"value": "999999",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{testingHost}}/v1/otp/confirm",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"otp",
+								"confirm"
+							]
+						},
+						"description": "Confirm the OTP received by the user"
+					},
+					"response": []
+				},
+				{
+					"name": "Resend OTP",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/otp/resend",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"otp",
+								"resend"
+							]
+						},
+						"description": "Resend OTP to user mobile no\nMax of 3 attempts allowed in 25 hours"
+					},
+					"response": []
+				}
+			],
+			"description": "Request related to otp like send otp, confirm otp, resend otp",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2780ea2d-4654-4102-b40d-070de1015c88",
+								"exec": [
+									"pm.test(`Status Code, \"200\"`, ()=>{",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(`\"OK\", User profile successfully`, ()=>{",
+									"    pm.expect(jsonData.msg).to.eql(\"OK\");",
+									"});",
+									"",
+									"//setting headers in env variable use in the otp verification",
+									"pm.environment.set(\"x-auth-token\", pm.response.headers.get(\"x-auth-token\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/users/profile",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"profile"
+							]
+						},
+						"description": "This api will provide the user profile data saved on db"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "802f4df2-a02c-47ba-a364-d02daed8edfd",
+								"exec": [
+									"pm.test(`Status Code, \"200\"`, ()=>{",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(`\"OK\", User profile updated successfully`, ()=>{",
+									"    pm.expect(jsonData.msg).to.eql(\"OK\");",
+									"    pm.expect(jsonData.data).to.eql(\"DONE\");",
+									"});",
+									"",
+									"//setting headers in env variable use in the otp verification",
+									"pm.environment.set(\"x-auth-token\", pm.response.headers.get(\"x-auth-token\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "xnamew",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "lastname",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "M",
+									"type": "text"
+								},
+								{
+									"key": "lang",
+									"value": "EN",
+									"type": "text"
+								},
+								{
+									"key": "saluation",
+									"value": "MR",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{testingHost}}/v1/users/update",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"update"
+							]
+						},
+						"description": "This api will update the user data \nLang value is either HI or EN\nGender possible values are M, F or O\nSaluation possible values are MR, MISS or MRS"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout the User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1284dcb8-5457-44c3-a3c5-87a55c0b32ee",
+								"exec": [
+									"pm.test(`Status Code, \"200\"`, ()=>{",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(`\"OK\", Logout successfully`, ()=>{",
+									"    pm.expect(jsonData.msg).to.eql(\"OK\");",
+									"    pm.expect(jsonData.msg).to.eql(\"DONE\");",
+									"});",
+									"",
+									"//setting headers in env variable use in the otp verification",
+									"pm.environment.set(\"x-auth-token\", pm.response.headers.get(\"x-auth-token\"));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/users/logout",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"logout"
+							]
+						},
+						"description": "This api will logout the user from server side"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Listen",
+			"item": [
+				{
+					"name": "Update listen part",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "completion",
+									"value": "55",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{testingHost}}/v1/listen/completion/:audioUID",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"listen",
+								"completion",
+								":audioUID"
+							],
+							"variable": [
+								{
+									"key": "audioUID",
+									"value": "FILE_heKeOL5b"
+								}
+							]
+						},
+						"description": "Update listen percentage completed by the user"
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Audio Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/listen/data/:audioUID",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"listen",
+								"data",
+								":audioUID"
+							],
+							"variable": [
+								{
+									"key": "audioUID",
+									"value": "FILE_xyu2NT_g2U"
+								}
+							]
+						},
+						"description": "This api will fetch data of audio"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e866c389-3326-4c1e-adff-b851f7ac70c8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "406dfff0-1650-46e9-9d69-01e9d47297e2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Temp APIs",
+			"item": [
+				{
+					"name": "OTP of mobile No",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{testingHost}}/v1/temp/otp/:mobileNo",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"temp",
+								"otp",
+								":mobileNo"
+							],
+							"variable": [
+								{
+									"key": "mobileNo",
+									"value": "8930154773"
+								}
+							]
+						},
+						"description": "This api will return the otp send to an mobile no"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Redis Cache",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{testingHost}}/v1/temp/clear/redis",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"temp",
+								"clear",
+								"redis"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "This apis will work untill the production is complete",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Main List",
+			"item": [
+				{
+					"name": "MainList Elements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{x-auth-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/list/main/all?skip=0",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"list",
+								"main",
+								"all"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Fetching all the elements of main list\n"
+					},
+					"response": []
+				}
+			],
+			"description": "All APIs related to main list ",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "68a2f621-2571-4cff-b594-a480ffe7ed77",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2730319f-9e8c-40f4-a8c1-24d748d816bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "SubList Data",
+			"item": [
+				{
+					"name": "SubList Elements ",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{x-auth-token}}"
+							}
+						],
+						"url": {
+							"raw": "{{testingHost}}/v1/list/sub/all?skip=0&mainListUID=MAINLIST_x_VndlpY",
+							"host": [
+								"{{testingHost}}"
+							],
+							"path": [
+								"v1",
+								"list",
+								"sub",
+								"all"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "0"
+								},
+								{
+									"key": "mainListUID",
+									"value": "MAINLIST_x_VndlpY"
+								}
+							]
+						},
+						"description": "Fetching all the elements of sub list\n"
+					},
+					"response": []
+				}
+			],
+			"description": "All APIs related to Sub List data operation",
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0524bceb-1021-4ed6-8869-b832232415a6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1805f39b-d8d9-4fc9-9bf6-b76df6582937",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f7fd6c7b-5323-4985-beb2-2b2b051f323c",
+			"key": "testingHost",
+			"value": "https://jinvani.herokuapp.com"
+		},
+		{
+			"id": "c99499cd-c9fa-4b5e-b189-7d1c0c6ba0ca",
+			"key": "x-auth-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGVObyI6Ijg5MzAxNTQ3NzMiLCJpcEFkZHJlc3MiOiIyNC40OC4wLjEiLCJpYXQiOjE1OTg4NDY5NjksImV4cCI6MzYxNTg4NDY5Njl9.zmoll9ZbHCoxPxcVcoTMNoo7XfpArpHJCcmr07hvGxQ"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

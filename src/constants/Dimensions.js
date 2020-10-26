@@ -13,3 +13,41 @@ export const fs18 = 18;
 export const fs19 = 19;
 export const fs30 = 30;
 export const fs51 = 51;
+
+export const FontFamily = {
+    BaiR: "BaiJamjuree-Regular",
+    BaiSB: "BaiJamjuree-SemiBold",
+    IBMPM: "IBMPlexSans-Medium",
+    IBMPR:
+        // Platform.OS === PlatformType.Android
+        //?
+        "IBMPlexSans-Regular",
+    // : "BaiJamjuree-Regular",
+    IBMPSB: "IBMPlexSans-SemiBold",
+};
+
+export const genderFields = [
+    {
+        label: "Male",
+        value: "Male",
+    },
+    {
+        label: "Female",
+        value: "Female",
+    },
+    {
+        label: "Other",
+        value: "Other",
+    },
+];
+
+export const languageFields = [
+    {
+        label: "English",
+        value: "En",
+    },
+    {
+        label: "Hindi",
+        value: "Hi",
+    },
+];

@@ -3,7 +3,7 @@ import WrappedRectangleButton from "./WrappedRectangleButton";
 import Loader from "./Loader";
 import WrappedRoundButton from "./WrappedRoundButton.js";
 import WrappedTextInput from "./WrappedTextInput";
-//import WrappedText from './WrappedText'
+import WrappedText from "./WrappedText";
 
 export {
     WrappedDropDown,
@@ -11,5 +11,5 @@ export {
     WrappedRoundButton,
     WrappedTextInput,
     Loader,
-    //  WrappedText
+    WrappedText,
 };

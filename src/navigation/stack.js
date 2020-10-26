@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 
 const Auth = () => {
     return (
-        <Stack.Navigator initialRouteName={"otpScreen"} headerMode="none">
+        <Stack.Navigator initialRouteName={"profileScreen"} headerMode="none">
             <Stack.Screen name="otpScreen" component={Otp} />
             <Stack.Screen name="loginScreen" component={Login} />
             <Stack.Screen name="profileScreen" component={Profile} />

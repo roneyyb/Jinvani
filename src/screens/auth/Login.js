@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {View, Image, StyleSheet} from "react-native";
 import JainSymbol from "../../icons/jain_symbol.png";
-import {WrappedRectangleButton, Loader} from "../../components/index";
+import {WrappedRectangleButton, Loader} from "../components/index";
 import {Input} from "react-native-elements";
 //import WrappedTextInput from "./components/WrappedTextInput";ents";
 

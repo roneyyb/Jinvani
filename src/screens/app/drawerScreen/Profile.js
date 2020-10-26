@@ -1,18 +1,31 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
 import {Input} from "react-native-elements";
-//import {Checkbox, Title, Caption} from "react-native-paper";
-import Button from "../../../components/WrappedRectangleButton";
-import Loader from "../../../components/Loader";
+import Button from "../../components/WrappedRectangleButton";
+import Loader from "../../components/Loader";
+import WrappedText from "../../components/WrappedText";
+import WrappedTextInput from "../../components/WrappedTextInput";
+import WrappedDropDown from "../../components/WrappedDropDown";
+import {
+    FontFamily,
+    globalHeight,
+    genderFields,
+    languageFields,
+    fs16,
+} from "../../../constants/Dimensions";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scrollview";
 
 class Profile extends Component {
     state = {
         firstName: "",
         lastName: "",
-        gender: "",
+        gender: genderFields[0].value,
+        language: languageFields[0].value,
         firstNameError: "",
         lastNameError: "",
         genderError: "",
+        error: {},
+        language: "",
         isLoading: false,
     };
 
@@ -28,84 +41,90 @@ class Profile extends Component {
             genderError,
             firstNameError,
             lastNameError,
+            language,
+            error,
             isLoading,
         } = this.state;
         return (
             <View style={{flex: 1}}>
                 <View style={styles.Container}>
-                    {/* <Title style={styles.headingStyle}>{"Add Details"}</Title>
-                    <Caption style={styles.subHeadingStyle}>
-                        {"Please provide following details."}
-                    </Caption> */}
-                    <View style={{marginTop: 100}}>
-                        <View style={styles.textFiledContainer}>
-                            <Input
-                                autoCorrect={false}
-                                enablesReturnKeyAutomatically={true}
-                                returnKeyType="next"
-                                errorMessage={firstNameError}
-                                keyboardType={"numeric"}
-                                placeholder="FirstName"
-                                value={firstName}
-                                onChangeText={(firstName) => {
-                                    this.setState({firstName});
-                                }}
-                            />
-                            <Input
-                                autoCorrect={false}
-                                enablesReturnKeyAutomatically={true}
-                                returnKeyType="next"
-                                errorMessage={lastNameError}
-                                keyboardType={"numeric"}
-                                placeholder="LastName"
-                                value={lastName}
-                                onChangeText={(lastName) => {
-                                    this.setState({lastName});
-                                }}
-                            />
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
+                    <WrappedText
+                        text={"Add Details"}
+                        textStyle={styles.headingStyle}
+                        fontFamily={"IBMPlexSans-Medium"}
+                    />
+                    <WrappedText
+                        text={
+                            "Please provide following details for better user experience."
+                        }
+                        textStyle={styles.subHeadingStyle}
+                        fontFamily={FontFamily.IBMPR}
+                    />
+
+                    <KeyboardAwareScrollView style={{}}>
+                        <WrappedTextInput
+                            value={firstName}
+                            onChangeText={(firstName) => {
+                                this.setState({firstName});
                             }}
-                        >
-                            <View style={{marginLeft: 10}}>
-                                <Text style={styles.subHeadingStyle}>
-                                    Gender{" "}
-                                </Text>
-                            </View>
-                            <View style={{flexDirection: "row"}}>
-                                {/* <Checkbox
-                                    status={
-                                        gender === "M" ? "checked" : "unchecked"
-                                    }
-                                    onPress={() => {
-                                        this.setGender("M");
-                                    }}
-                                />
-                                <Title>{"M"}</Title>
-                                <Checkbox
-                                    status={
-                                        gender === "F" ? "checked" : "unchecked"
-                                    }
-                                    onPress={() => {
-                                        this.setGender("F");
-                                    }}
-                                />
-                                <Title>{"F"}</Title>
-                                <Checkbox
-                                    status={
-                                        gender === "O" ? "checked" : "unchecked"
-                                    }
-                                    onPress={() => {
-                                        this.setGender("O");
-                                    }}
-                                />
-                                <Title>{"O"}</Title> */}
-                            </View>
-                        </View>
+                            placeholder={"First name"}
+                            style={styles.textContainer}
+                            errorText={error["firstName"]}
+                        />
+                        <WrappedTextInput
+                            value={lastName}
+                            onChangeText={(lastName) => {
+                                this.setState({lastName});
+                            }}
+                            placeholder={"Last name"}
+                            style={styles.textContainer}
+                            errorText={error["lastName"]}
+                        />
+                    </KeyboardAwareScrollView>
+
+                    <View>
+                        <WrappedDropDown
+                            items={genderFields}
+                            placeholder={"Gender"}
+                            //defaultValue={"Male"}
+                            containerStyle={styles.dropDownContainer}
+                            itemStyle={{
+                                justifyContent: "flex-start",
+                            }}
+                            placeholder={"Select Gender"}
+                            labelStyle={styles.dropDownText}
+                            onChangeItem={(gender) => {
+                                this.setState({
+                                    gender: gender.value,
+                                });
+                            }}
+                        />
+                        {error["gender"] ? (
+                            <Text style={styles.error}>{error["gender"]}</Text>
+                        ) : (
+                            <View />
+                        )}
+
+                        <WrappedDropDown
+                            items={languageFields}
+                            placeholder={"Select Language"}
+                            defaultValue={languageFields[0].value}
+                            containerStyle={styles.dropDownContainer}
+                            itemStyle={{
+                                justifyContent: "flex-start",
+                            }}
+                            labelStyle={styles.dropDownText}
+                            onChangeItem={(gender) => {
+                                this.setState({
+                                    gender: gender.value,
+                                });
+                            }}
+                        />
+                        {error["gender"] ? (
+                            <Text style={styles.error}>{error["gender"]}</Text>
+                        ) : (
+                            <View />
+                        )}
                     </View>
                     <View style={styles.buttonContainer}>
                         <Button
@@ -133,7 +152,7 @@ const styles = StyleSheet.create({
     headingStyle: {
         color: "#EF8B31",
         fontSize: 24,
-        fontWeight: "bold",
+        fontFamily: FontFamily.BaiSB,
         //fontFamily: "Libre Franklin",
         fontStyle: "normal",
     },
@@ -146,7 +165,8 @@ const styles = StyleSheet.create({
     subHeadingStyle: {
         color: "#D1D1D1",
         //marginTop: 14,
-        fontSize: 20,
+        fontSize: fs16,
+        fontFamily: FontFamily.IBMPM,
         //fontFamily: "Libre Franklin",
         fontStyle: "normal",
     },
@@ -167,6 +187,30 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         //fontFamily: "Libre Franklin",
         fontStyle: "normal",
+    },
+    textContainer: {
+        height: globalHeight * 0.6,
+        borderRadius: globalHeight * 0.05,
+        borderWidth: globalHeight * 0.02,
+        borderColor: "#EEEEEE",
+        color: "#1A202C4D",
+        justifyContent: "center",
+    },
+    dropDownContainer: {
+        width: "100%",
+        height: globalHeight * 0.6,
+        marginTop: 10,
+    },
+    dropDownText: {
+        fontFamily: "IBMPlexSans-Medium",
+        fontStyle: "normal",
+        fontSize: fs16,
+        //color: "#00000099",
+        color: "#1A202C4D",
+        fontWeight: "normal",
+    },
+    textInput: {
+        color: "#1A202C4D",
     },
 });
 
