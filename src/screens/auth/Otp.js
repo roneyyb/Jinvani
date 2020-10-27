@@ -65,6 +65,7 @@ class Otp extends Component {
         if (response.success) {
             this.setState({isLoading: false});
             if (response.message == "WELCOME BACK") {
+                this.props.navigation.navigate("profileScreen");
             } else {
                 this.props.navigation.navigate("profileScreen");
             }

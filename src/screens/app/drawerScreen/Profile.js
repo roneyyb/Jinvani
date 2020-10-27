@@ -12,21 +12,22 @@ import {
     globalHeight,
     genderFields,
     languageFields,
+    salutationFields,
     fs16,
+    errorColor,
+    fs14,
+    globalWidth,
 } from "../../../constants/Dimensions";
-import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scrollview";
-
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import {apiHandler, routeNames} from "../../../server/apiHandler";
 class Profile extends Component {
     state = {
         firstName: "",
         lastName: "",
         gender: genderFields[0].value,
         language: languageFields[0].value,
-        firstNameError: "",
-        lastNameError: "",
-        genderError: "",
+        salutaion: salutationFields[0].value,
         error: {},
-        language: "",
         isLoading: false,
     };
 
@@ -34,24 +35,59 @@ class Profile extends Component {
         this.setState({gender});
     };
 
-    render() {
-        const {
+    sendDetailsToServer = async () => {
+        this.setState({isLoading: true});
+        const {firstName, lastName, language, salutaion, gender} = this.state;
+        const response = await apiHandler(routeNames.UpdateProfile, {
             firstName,
             lastName,
             gender,
-            genderError,
-            firstNameError,
-            lastNameError,
-            language,
-            error,
-            isLoading,
-        } = this.state;
+            lang: language,
+            saluation: salutaion,
+        });
+        if (response.success) {
+            this.setState({isLoading: false});
+            // this.props.navigation.navigate("otpScreen", {
+            //     mobileNumber: phone,
+            // });
+        } else {
+            this.setState({
+                error: {fetchError: response.message},
+                isLoading: false,
+            });
+        }
+    };
+
+    submitDetails = () => {
+        const {firstName, lastName} = this.state;
+        let error = {},
+            flag = 0;
+        if (firstName.length < 3) {
+            flag = 1;
+            error["firstName"] = "First Name length should be greater than 2.";
+        }
+        if (lastName.length < 3) {
+            flag = 1;
+            error["lastName"] = "Last Name length should be greater than 2.";
+        }
+        this.setState({error});
+
+        if (flag == 0) {
+            this.sendDetailsToServer();
+        }
+    };
+
+    render() {
+        const {firstName, lastName, error, isLoading} = this.state;
         return (
             <View style={{flex: 1}}>
-                <KeyboardAwareScrollView
-                    style={{flex: 1, backgroundColor: "#ffffff"}}
-                >
-                    <View style={styles.Container}>
+                <View style={styles.Container}>
+                    <KeyboardAwareScrollView
+                        contentContainerStyle={{
+                            flex: 1,
+                            backgroundColor: "#ffffff",
+                        }}
+                    >
                         <WrappedText
                             text={"Add Details"}
                             textStyle={styles.headingStyle}
@@ -64,11 +100,43 @@ class Profile extends Component {
                             textStyle={styles.subHeadingStyle}
                             fontFamily={FontFamily.IBMPR}
                         />
+                        <View style={{marginTop: globalHeight * 0.5}} />
+                        {error["fetchError"] ? (
+                            <WrappedText
+                                text={error["fetchError"]}
+                                textStyle={styles.errorStyle}
+                                containerStyle={{alignSelf: "center"}}
+                            />
+                        ) : (
+                            <View />
+                        )}
+                        <WrappedDropDown
+                            items={salutationFields}
+                            defaultValue={salutationFields[0].value}
+                            containerStyle={styles.dropDownContainer}
+                            itemStyle={{
+                                justifyContent: "flex-start",
+                            }}
+                            labelStyle={styles.dropDownText}
+                            onChangeItem={(salutaion) => {
+                                this.setState({
+                                    salutaion: salutaion.value,
+                                });
+                            }}
+                        />
+                        {error["salutation"] ? (
+                            <Text style={styles.error}>
+                                {error["salutation"]}
+                            </Text>
+                        ) : (
+                            <View />
+                        )}
                         <WrappedTextInput
                             value={firstName}
                             onChangeText={(firstName) => {
                                 this.setState({firstName});
                             }}
+                            textInputStyle={{paddingLeft: 10}}
                             placeholder={"First name"}
                             style={styles.textContainer}
                             errorText={error["firstName"]}
@@ -78,6 +146,7 @@ class Profile extends Component {
                             onChangeText={(lastName) => {
                                 this.setState({lastName});
                             }}
+                            textInputStyle={{paddingLeft: 10}}
                             placeholder={"Last name"}
                             style={styles.textContainer}
                             errorText={error["lastName"]}
@@ -86,12 +155,11 @@ class Profile extends Component {
                             <WrappedDropDown
                                 items={genderFields}
                                 placeholder={"Gender"}
-                                //defaultValue={"Male"}
+                                defaultValue={genderFields[0].value}
                                 containerStyle={styles.dropDownContainer}
                                 itemStyle={{
                                     justifyContent: "flex-start",
                                 }}
-                                placeholder={"Select Gender"}
                                 labelStyle={styles.dropDownText}
                                 onChangeItem={(gender) => {
                                     this.setState({
@@ -130,15 +198,15 @@ class Profile extends Component {
                                 <View />
                             )}
                         </View>
-                    </View>
-                </KeyboardAwareScrollView>
+                    </KeyboardAwareScrollView>
+                </View>
                 <View style={styles.buttonContainer}>
                     <WrappedRectangleButton
                         containerStyle={styles.buttonStyle}
                         buttonText={"Submit"}
                         textStyle={styles.textStyle}
                         onPress={() => {
-                            //this.checkInput();
+                            this.submitDetails();
                         }}
                     />
                 </View>
@@ -151,7 +219,7 @@ const styles = StyleSheet.create({
     Container: {
         flex: 1,
         backgroundColor: "#ffffff",
-        paddingTop: 40,
+        paddingTop: "5%",
         paddingHorizontal: "5%",
     },
     headingStyle: {
@@ -175,16 +243,20 @@ const styles = StyleSheet.create({
         //fontFamily: "Libre Franklin",
         fontStyle: "normal",
     },
+    errorStyle: {
+        color: errorColor,
+        fontSize: fs14,
+    },
     buttonStyle: {
-        height: 40,
-        width: 80,
-        borderRadius: 12,
+        height: globalHeight * 0.5,
+        width: globalWidth * 2,
+        borderRadius: globalHeight * 0.1,
         backgroundColor: "#EF8B31",
     },
     buttonContainer: {
         position: "absolute",
-        bottom: 40,
-        right: 40,
+        bottom: "5%",
+        right: "5%",
     },
     textStyle: {
         color: "#FFFFFF",
@@ -198,7 +270,7 @@ const styles = StyleSheet.create({
         borderRadius: globalHeight * 0.05,
         borderWidth: globalHeight * 0.02,
         borderColor: "#EEEEEE",
-        paddingLeft: 10,
+
         color: "#1A202C4D",
         justifyContent: "center",
     },

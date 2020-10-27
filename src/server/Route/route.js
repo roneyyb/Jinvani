@@ -12,4 +12,8 @@ export const RouteList = {
         url: version1 + "otp/resend",
         method: "GET",
     },
+    UpdateProfile: {
+        url: version1 + "users/update",
+        method: "PATCH",
+    },
 };

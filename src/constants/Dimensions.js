@@ -29,25 +29,40 @@ export const FontFamily = {
 export const genderFields = [
     {
         label: "Male",
-        value: "Male",
+        value: "M",
     },
     {
         label: "Female",
-        value: "Female",
+        value: "F",
     },
     {
         label: "Other",
-        value: "Other",
+        value: "O",
     },
 ];
 
 export const languageFields = [
     {
         label: "English",
-        value: "En",
+        value: "EN",
     },
     {
         label: "Hindi",
-        value: "Hi",
+        value: "HI",
+    },
+];
+
+export const salutationFields = [
+    {
+        label: "MR",
+        value: "MR",
+    },
+    {
+        label: "MISS",
+        value: "MISS",
+    },
+    {
+        label: "MRS",
+        value: "MRS",
     },
 ];

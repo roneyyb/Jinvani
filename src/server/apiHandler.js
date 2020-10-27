@@ -59,4 +59,5 @@ export const routeNames = {
     Otp: "Otp",
     ConfirmOtp: "ConfirmOtp",
     ResendOtp: "ResendOtp",
+    UpdateProfile: "UpdateProfile",
 };
