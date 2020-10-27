@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
-import {Input} from "react-native-elements";
-import Button from "../../components/WrappedRectangleButton";
-import Loader from "../../components/Loader";
-import WrappedText from "../../components/WrappedText";
-import WrappedTextInput from "../../components/WrappedTextInput";
-import WrappedDropDown from "../../components/WrappedDropDown";
+import {
+    WrappedDropDown,
+    WrappedRectangleButton,
+    WrappedText,
+    WrappedTextInput,
+    Loader,
+} from "../../components";
 import {
     FontFamily,
     globalHeight,
@@ -47,21 +48,22 @@ class Profile extends Component {
         } = this.state;
         return (
             <View style={{flex: 1}}>
-                <View style={styles.Container}>
-                    <WrappedText
-                        text={"Add Details"}
-                        textStyle={styles.headingStyle}
-                        fontFamily={"IBMPlexSans-Medium"}
-                    />
-                    <WrappedText
-                        text={
-                            "Please provide following details for better user experience."
-                        }
-                        textStyle={styles.subHeadingStyle}
-                        fontFamily={FontFamily.IBMPR}
-                    />
-
-                    <KeyboardAwareScrollView style={{}}>
+                <KeyboardAwareScrollView
+                    style={{flex: 1, backgroundColor: "#ffffff"}}
+                >
+                    <View style={styles.Container}>
+                        <WrappedText
+                            text={"Add Details"}
+                            textStyle={styles.headingStyle}
+                            fontFamily={"IBMPlexSans-Medium"}
+                        />
+                        <WrappedText
+                            text={
+                                "Please provide following details for better user experience."
+                            }
+                            textStyle={styles.subHeadingStyle}
+                            fontFamily={FontFamily.IBMPR}
+                        />
                         <WrappedTextInput
                             value={firstName}
                             onChangeText={(firstName) => {
@@ -80,62 +82,65 @@ class Profile extends Component {
                             style={styles.textContainer}
                             errorText={error["lastName"]}
                         />
-                    </KeyboardAwareScrollView>
+                        <View>
+                            <WrappedDropDown
+                                items={genderFields}
+                                placeholder={"Gender"}
+                                //defaultValue={"Male"}
+                                containerStyle={styles.dropDownContainer}
+                                itemStyle={{
+                                    justifyContent: "flex-start",
+                                }}
+                                placeholder={"Select Gender"}
+                                labelStyle={styles.dropDownText}
+                                onChangeItem={(gender) => {
+                                    this.setState({
+                                        gender: gender.value,
+                                    });
+                                }}
+                            />
+                            {error["gender"] ? (
+                                <Text style={styles.error}>
+                                    {error["gender"]}
+                                </Text>
+                            ) : (
+                                <View />
+                            )}
 
-                    <View>
-                        <WrappedDropDown
-                            items={genderFields}
-                            placeholder={"Gender"}
-                            //defaultValue={"Male"}
-                            containerStyle={styles.dropDownContainer}
-                            itemStyle={{
-                                justifyContent: "flex-start",
-                            }}
-                            placeholder={"Select Gender"}
-                            labelStyle={styles.dropDownText}
-                            onChangeItem={(gender) => {
-                                this.setState({
-                                    gender: gender.value,
-                                });
-                            }}
-                        />
-                        {error["gender"] ? (
-                            <Text style={styles.error}>{error["gender"]}</Text>
-                        ) : (
-                            <View />
-                        )}
-
-                        <WrappedDropDown
-                            items={languageFields}
-                            placeholder={"Select Language"}
-                            defaultValue={languageFields[0].value}
-                            containerStyle={styles.dropDownContainer}
-                            itemStyle={{
-                                justifyContent: "flex-start",
-                            }}
-                            labelStyle={styles.dropDownText}
-                            onChangeItem={(gender) => {
-                                this.setState({
-                                    gender: gender.value,
-                                });
-                            }}
-                        />
-                        {error["gender"] ? (
-                            <Text style={styles.error}>{error["gender"]}</Text>
-                        ) : (
-                            <View />
-                        )}
+                            <WrappedDropDown
+                                items={languageFields}
+                                placeholder={"Select Language"}
+                                defaultValue={languageFields[0].value}
+                                containerStyle={styles.dropDownContainer}
+                                itemStyle={{
+                                    justifyContent: "flex-start",
+                                }}
+                                labelStyle={styles.dropDownText}
+                                onChangeItem={(gender) => {
+                                    this.setState({
+                                        gender: gender.value,
+                                    });
+                                }}
+                            />
+                            {error["gender"] ? (
+                                <Text style={styles.error}>
+                                    {error["gender"]}
+                                </Text>
+                            ) : (
+                                <View />
+                            )}
+                        </View>
                     </View>
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            containerStyle={styles.buttonStyle}
-                            buttonText={"Submit"}
-                            textStyle={styles.textStyle}
-                            onPress={() => {
-                                //this.checkInput();
-                            }}
-                        />
-                    </View>
+                </KeyboardAwareScrollView>
+                <View style={styles.buttonContainer}>
+                    <WrappedRectangleButton
+                        containerStyle={styles.buttonStyle}
+                        buttonText={"Submit"}
+                        textStyle={styles.textStyle}
+                        onPress={() => {
+                            //this.checkInput();
+                        }}
+                    />
                 </View>
                 {isLoading ? <Loader /> : <View />}
             </View>
@@ -193,6 +198,7 @@ const styles = StyleSheet.create({
         borderRadius: globalHeight * 0.05,
         borderWidth: globalHeight * 0.02,
         borderColor: "#EEEEEE",
+        paddingLeft: 10,
         color: "#1A202C4D",
         justifyContent: "center",
     },

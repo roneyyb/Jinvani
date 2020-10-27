@@ -57,4 +57,6 @@ export const apiHandler = async (route, Data) => {
 
 export const routeNames = {
     Otp: "Otp",
+    ConfirmOtp: "ConfirmOtp",
+    ResendOtp: "ResendOtp",
 };

@@ -4,4 +4,12 @@ export const RouteList = {
         url: version1 + "otp/send",
         method: "POST",
     },
+    ConfirmOtp: {
+        url: version1 + "otp/confirm",
+        method: "PATCH",
+    },
+    ResendOtp: {
+        url: version1 + "otp/resend",
+        method: "GET",
+    },
 };

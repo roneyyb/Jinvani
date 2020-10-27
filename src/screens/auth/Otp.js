@@ -2,17 +2,25 @@ import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
 
 import OTPTextInput from "react-native-otp-textinput";
-import WrappedRectangleButton from "../components/WrappedRectangleButton";
-import Loader from "../components/Loader";
-import {globalHeight, globalWidth} from "../../constants/Dimensions";
+import {Loader, WrappedRectangleButton, WrappedText} from "../components";
+import {
+    globalHeight,
+    globalWidth,
+    FontFamily,
+    fs16,
+    fs14,
+    fs24,
+    errorColor,
+} from "../../constants/Dimensions";
 import {apiHandler, routeNames} from "../../server/apiHandler";
-//import {apiEndPoint} from "../../constants/server";
 
+//import {apiEndPoint} from "../../constants/server";
+const TIMER = 5;
 class Otp extends Component {
     state = {
         otp: "",
         error: {},
-        timer: 5,
+        timer: TIMER,
         isLoading: false,
     };
 
@@ -34,19 +42,49 @@ class Otp extends Component {
         }, 1000);
     };
 
-    resendOtp = () => {
-        this.setState({timer: 5});
-        this.setTimerForOTP();
+    resendOtp = async () => {
+        this.setState({isLoading: true, timer: TIMER});
+        const response = await apiHandler(routeNames.ResendOtp);
+        if (response.success) {
+            this.setState({isLoading: false});
+            this.setTimerForOTP();
+        } else {
+            this.setState({
+                error: {otpError: response.message},
+                isLoading: false,
+            });
+        }
+    };
+
+    verifyOtp = async (otp) => {
+        this.setState({isLoading: true, error: {}});
+        const response = await apiHandler(routeNames.ConfirmOtp, {
+            otpNumber: otp.toString(),
+        });
+
+        if (response.success) {
+            this.setState({isLoading: false});
+            if (response.message == "WELCOME BACK") {
+            } else {
+                this.props.navigation.navigate("profileScreen");
+            }
+        } else {
+            this.setState({
+                error: {otpError: response.message},
+                isLoading: false,
+            });
+        }
     };
 
     checkInput = () => {
         const {otp} = this.state;
         if (otp.length < 6) {
-            this.setState({otpError: "Please enter all fields."});
+            this.setState({error: {otpError: "Please enter all fields."}});
         } else {
-            this.checkOtp(otp);
+            this.verifyOtp(otp);
         }
     };
+
     componentDidMount() {
         this.setTimerForOTP();
         //this.sendMail();
@@ -59,19 +97,38 @@ class Otp extends Component {
     }
 
     render() {
-        const {isLoading, otpError} = this.state;
+        const {isLoading, error, timer} = this.state;
         return (
             <View style={{flex: 1}}>
                 <View style={styles.Container}>
-                    <Text style={styles.headingStyle}>
-                        {"Verify Your Account"}
-                    </Text>
-                    <Text style={styles.subHeadingStyle}>
-                        {
+                    <WrappedText
+                        text={"Verify Your Account"}
+                        textStyle={styles.headingStyle}
+                        fontFamily={"IBMPlexSans-Medium"}
+                    />
+                    <WrappedText
+                        text={
                             "An OTP has been sent to you phone number. Please enter that OTP to login."
                         }
-                    </Text>
-                    <View style={{paddingHorizontal: 30, marginTop: 100}}>
+                        textStyle={styles.subHeadingStyle}
+                        fontFamily={FontFamily.IBMPR}
+                    />
+
+                    <View
+                        style={{
+                            paddingHorizontal: 30,
+                            marginTop: globalHeight * 1.5,
+                        }}
+                    >
+                        {error["otpError"] ? (
+                            <WrappedText
+                                text={error["otpError"]}
+                                textStyle={styles.errorStyle}
+                                containerStyle={{alignSelf: "center"}}
+                            />
+                        ) : (
+                            <View />
+                        )}
                         <OTPTextInput
                             ref={(e) => (this.otpInput = e)}
                             inputCount={6}
@@ -81,9 +138,6 @@ class Otp extends Component {
                                 this.setState({otp});
                             }}
                         />
-                        <View style={{alignSelf: "center"}}>
-                            <Text style={{color: "red"}}>{otpError}</Text>
-                        </View>
                     </View>
                     <View
                         style={{
@@ -93,20 +147,23 @@ class Otp extends Component {
                         }}
                     >
                         <Text
-                            style={styles.otpText}
+                            style={[
+                                styles.otpText,
+                                {fontWeight: timer < 1 ? "bold" : "normal"},
+                            ]}
                             onPress={() => {
-                                if (this.state.timer == 0) {
+                                if (timer < 1) {
                                     this.resendOtp();
                                 }
                             }}
                         >
                             {`Resend OTP`}
                         </Text>
-                        {this.state.timer !== 0 ? (
+                        {timer !== 0 ? (
                             <Text
                                 style={[styles.otpText, {fontWeight: "bold"}]}
                             >
-                                {` in ${this.state.timer}s`}
+                                {` in ${timer}s`}
                             </Text>
                         ) : (
                             <View>{}</View>
@@ -118,7 +175,7 @@ class Otp extends Component {
                             buttonText={"Submit"}
                             textStyle={styles.textStyle}
                             onPress={() => {
-                                //this.onSubmit();
+                                this.checkInput();
                             }}
                         />
                     </View>
@@ -138,22 +195,23 @@ const styles = StyleSheet.create({
     },
     headingStyle: {
         color: "#EF8B31",
-        fontSize: 24,
-        fontWeight: "bold",
-        fontFamily: "Libre Franklin",
+        fontSize: fs24,
         fontStyle: "normal",
     },
     otpText: {
         color: "#EF8B31",
         fontSize: 16,
-        fontFamily: "Libre Franklin",
+        fontFamily: FontFamily.IBMPR,
         fontStyle: "normal",
+    },
+    errorStyle: {
+        color: errorColor,
+        fontSize: fs14,
     },
     subHeadingStyle: {
         color: "#D1D1D1",
         marginTop: 14,
-        fontSize: 20,
-        fontFamily: "Libre Franklin",
+        fontSize: fs16,
         fontStyle: "normal",
     },
     buttonStyle: {
