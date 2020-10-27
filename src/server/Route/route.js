@@ -16,4 +16,8 @@ export const RouteList = {
         url: version1 + "users/update",
         method: "PATCH",
     },
+    MainList: {
+        url: version1 + "list/main/all?skip=0",
+        method: "GET",
+    },
 };
