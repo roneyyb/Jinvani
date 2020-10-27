@@ -27,7 +27,14 @@ const handleError = (error) => {
     }
 };
 
-export const apiHandler = async (route, Data) => {
+export const apiHandler = async (
+    route,
+    Data,
+    lazyLoading,
+    skip,
+    query,
+    queryValue,
+) => {
     try {
         const {method, url} = RouteList[route];
 
@@ -36,6 +43,10 @@ export const apiHandler = async (route, Data) => {
             url: apiEndPoint + url,
             data: Data,
         };
+        if (lazyLoading) {
+            options.url =
+                options.url + "skip=" + skip + "&" + query + "=" + queryValue;
+        }
 
         const response = await axios(options);
         const x_auth_token = response.headers["x-auth-token"];
@@ -61,4 +72,5 @@ export const routeNames = {
     ResendOtp: "ResendOtp",
     UpdateProfile: "UpdateProfile",
     MainList: "MainList",
+    SubList: "SubList",
 };

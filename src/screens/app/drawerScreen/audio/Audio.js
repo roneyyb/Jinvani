@@ -10,10 +10,10 @@ const Audio = (props) => {
     const [error, setError] = useState({});
 
     const onCategoryPress = (item) => {
-        const {category} = item;
-        if (category == "AUDIO") {
-        } else {
-        }
+        const {category, mainListUID} = item;
+        props.navigation.navigate("subListScreen", {
+            mainListUID: mainListUID,
+        });
     };
 
     const fetchCategory = async () => {
@@ -39,12 +39,13 @@ const Audio = (props) => {
                         <CategoryComponent
                             key={index}
                             item={item}
-                            onCategoryPress={(item) => {
+                            onPress={() => {
                                 onCategoryPress(item);
                             }}
                         />
                     );
                 }}
+                keyExtractor={(index) => index.toString()}
             />
             {loader ? <Loader /> : <View />}
         </View>

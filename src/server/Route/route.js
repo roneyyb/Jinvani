@@ -20,4 +20,8 @@ export const RouteList = {
         url: version1 + "list/main/all?skip=0",
         method: "GET",
     },
+    SubList: {
+        url: version1 + "list/sub/all?",
+        method: "GET",
+    },
 };
