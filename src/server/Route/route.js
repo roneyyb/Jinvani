@@ -1,5 +1,7 @@
-export const route = {
+const version1 = "/v1/";
+export const RouteList = {
     Otp: {
-        route: "/v1/",
+        url: version1 + "otp/send",
+        method: "POST",
     },
 };

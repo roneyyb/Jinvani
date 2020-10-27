@@ -1,19 +1,19 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text} from "react-native";
-import OTPTextInput from "react-native-otp-textinput";
-import Button from "../components/WrappedRectangleButton";
-import Loader from "../components/Loader";
 
-//import axios from "axios";
+import OTPTextInput from "react-native-otp-textinput";
+import WrappedRectangleButton from "../components/WrappedRectangleButton";
+import Loader from "../components/Loader";
+import {globalHeight, globalWidth} from "../../constants/Dimensions";
+import {apiHandler, routeNames} from "../../server/apiHandler";
 //import {apiEndPoint} from "../../constants/server";
 
 class Otp extends Component {
     state = {
         otp: "",
-        otpError: "",
+        error: {},
         timer: 5,
         isLoading: false,
-        fetchError: "",
     };
 
     clearText = () => {
@@ -33,55 +33,6 @@ class Otp extends Component {
             });
         }, 1000);
     };
-
-    // sendMail() {
-    //     const token = this.props.route.params.token;
-    //     console.log(token);
-    //     axios
-    //         .get(apiEndPoint + "/otp/sendOtp", {
-    //             headers: {
-    //                 "x-auth-token": token,
-    //             },
-    //         })
-    //         .then((response) => {
-    //             console.log(response.data);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    // }
-
-    // checkOtp = (otp) => {
-    //     const token = this.props.route.params.token;
-    //     this.setState({isLoading: true});
-    //     axios
-    //         .post(
-    //             apiEndPoint + "/otp/verifyOtp",
-    //             {
-    //                 otp: otp,
-    //             },
-    //             {
-    //                 headers: {
-    //                     "x-auth-token": token,
-    //                 },
-    //             },
-    //         )
-    //         .then((response) => {
-    //             console.log(response.data);
-    //             if (response.data.success) {
-    //                 this.setState({isLoading: false});
-    //                 this.props.navigation.navigate("resetScreen", {token});
-    //             } else {
-    //                 this.setState({
-    //                     isLoading: false,
-    //                     otpError: response.data.error,
-    //                 });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    // };
 
     resendOtp = () => {
         this.setState({timer: 5});
@@ -162,15 +113,13 @@ class Otp extends Component {
                         )}
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Button
+                        <WrappedRectangleButton
+                            containerStyle={styles.buttonStyle}
+                            buttonText={"Submit"}
+                            textStyle={styles.textStyle}
                             onPress={() => {
-                                this.props.navigation.navigate("login");
+                                //this.onSubmit();
                             }}
-                            backgroundColor={"#5000611A"}
-                            textColor={"#500061"}
-                            opacity={1}
-                            elevation={0}
-                            buttonText={"Sign In"}
                         />
                     </View>
                 </View>
@@ -208,15 +157,15 @@ const styles = StyleSheet.create({
         fontStyle: "normal",
     },
     buttonStyle: {
-        height: 40,
-        width: 80,
-        borderRadius: 12,
+        height: globalHeight * 0.5,
+        width: globalWidth * 2,
+        borderRadius: globalHeight * 0.1,
         backgroundColor: "#EF8B31",
     },
     buttonContainer: {
         position: "absolute",
-        bottom: 40,
-        right: 40,
+        bottom: "5%",
+        right: "5%",
     },
     textStyle: {
         color: "#FFFFFF",

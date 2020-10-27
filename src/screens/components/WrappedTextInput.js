@@ -121,12 +121,10 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 9,
         fontWeight: "normal",
-        //height: 50,
-        //color: "#1A202c",
 
         fontSize: fs15,
         fontFamily: "IBMPlexSans-Medium",
-        paddingLeft: 20,
+        //        paddingLeft: 20,
     },
     errorContainer: {
         //paddingLeft: 20,

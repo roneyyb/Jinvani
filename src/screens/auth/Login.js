@@ -1,20 +1,34 @@
 import React, {Component} from "react";
 import {View, Image, StyleSheet} from "react-native";
 import JainSymbol from "../../icons/jain_symbol.png";
-import {WrappedRectangleButton, Loader} from "../components/index";
-import {Input} from "react-native-elements";
-//import WrappedTextInput from "./components/WrappedTextInput";ents";
+import {WrappedTextInput, WrappedRectangleButton, Loader} from "../components";
+import {globalHeight, globalWidth} from "../../constants/Dimensions";
+import {apiHandler, routeNames} from "../../server/apiHandler";
 
 class Login extends Component {
     state = {
         phoneNumber: "",
         phoneNumberError: "",
-        fetchError: "",
         isLoading: false,
+        error: {},
     };
 
-    sendDetailsToServer = (phone) => {
-        this.props.navigation.navigate("otpScreen");
+    sendDetailsToServer = async (phone) => {
+        this.setState({isLoading: true});
+        const response = await apiHandler(routeNames.Otp, {
+            mobileNo: phone.toString(),
+        });
+        if (response.success) {
+            this.setState({isLoading: false});
+            this.props.navigation.navigate("otpScreen", {
+                mobileNumber: phone,
+            });
+        } else {
+            this.setState({
+                error: {phoneNumber: response.message},
+                isLoading: false,
+            });
+        }
     };
 
     setLoader = () => {
@@ -27,20 +41,19 @@ class Login extends Component {
 
     onSubmit = () => {
         const {phoneNumber} = this.state;
-        let flag = 0;
+        let error = {};
         const phoneValidation = /^[1-9]{1}[0-9]{9}$/;
         if (!phoneValidation.test(phoneNumber)) {
-            this.setState({
-                phoneNumberError: "Please enter valid phone number.",
-            });
+            error["phoneNumber"] = "Please enter valid phone number";
+            this.setState({error});
         } else {
-            this.setState({phoneNumberError: ""});
+            this.setState({error: {}});
             this.sendDetailsToServer(phoneNumber);
         }
     };
 
     render() {
-        const {isLoading, phoneNumber, phoneNumberError} = this.state;
+        const {isLoading, phoneNumber, error} = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.containerI}>
@@ -51,28 +64,24 @@ class Login extends Component {
                         />
                     </View>
                     <View style={styles.container2}>
-                        <Input
-                            autoCorrect={false}
-                            enablesReturnKeyAutomatically={true}
-                            returnKeyType="next"
-                            errorMessage={phoneNumberError}
-                            keyboardType={"numeric"}
-                            placeholder="Phone number"
+                        <WrappedTextInput
                             value={phoneNumber}
                             onChangeText={(phoneNumber) => {
                                 this.setState({phoneNumber});
                             }}
+                            keyboardType={"numeric"}
+                            placeholder={"Phone Number"}
+                            style={styles.textContainer}
+                            errorText={error["phoneNumber"]}
                         />
                         <View style={styles.buttonContainer}>
                             <WrappedRectangleButton
+                                containerStyle={styles.buttonStyle}
+                                buttonText={"Submit"}
+                                textStyle={styles.textStyle}
                                 onPress={() => {
-                                    this.props.navigation.navigate("login");
+                                    this.onSubmit();
                                 }}
-                                backgroundColor={"#5000611A"}
-                                textColor={"#500061"}
-                                opacity={1}
-                                elevation={0}
-                                buttonText={"Sign In"}
                             />
                         </View>
                     </View>
@@ -103,15 +112,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     buttonStyle: {
-        height: 40,
-        width: 80,
-        borderRadius: 12,
+        height: globalHeight * 0.5,
+        width: globalWidth * 2,
+        borderRadius: globalHeight * 0.1,
         backgroundColor: "#EF8B31",
     },
     buttonContainer: {
         position: "absolute",
-        bottom: 0,
-        right: 0,
+        bottom: "5%",
+        right: "5%",
     },
     textStyle: {
         color: "#FFFFFF",
@@ -119,6 +128,14 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontFamily: "Libre Franklin",
         fontStyle: "normal",
+    },
+    textContainer: {
+        height: globalHeight * 0.6,
+        //borderRadius: globalHeight * 0.05,
+        borderBottomWidth: globalHeight * 0.02,
+        borderColor: "#EEEEEE",
+        color: "#1A202C4D",
+        justifyContent: "center",
     },
 });
 
