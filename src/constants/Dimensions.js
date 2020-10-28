@@ -14,6 +14,7 @@ export const fs19 = 19;
 export const fs30 = 30;
 export const fs51 = 51;
 export const errorColor = "#F73D02CC";
+export const themeColor = "#EF8B31";
 export const FontFamily = {
     BaiR: "BaiJamjuree-Regular",
     BaiSB: "BaiJamjuree-SemiBold",

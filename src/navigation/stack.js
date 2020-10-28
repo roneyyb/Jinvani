@@ -11,6 +11,7 @@ import SideMenu from "../screens/app/drawer/SideMenu";
 //App Screens
 import Audio from "../screens/app/drawerScreen/audio/Audio";
 import SubList from "../screens/app/drawerScreen/audio/Sublist";
+import AudioPlayer from "../screens/app/drawerScreen/audio/AudioPlayer";
 import Faq from "../screens/app/drawerScreen/Faq";
 import Contactus from "../screens/app/drawerScreen/Contactus";
 import Feedback from "../screens/app/drawerScreen/Feedback";
@@ -30,9 +31,13 @@ const Auth = () => {
 
 const AudioNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName={"audioScreen"} headerMode="none">
+        <Stack.Navigator
+            initialRouteName={"audioPlayerScreen"}
+            headerMode="none"
+        >
             <Stack.Screen name="audioScreen" component={Audio} />
             <Stack.Screen name="subListScreen" component={SubList} />
+            <Stack.Screen name="audioPlayer" component={AudioPlayer} />
         </Stack.Navigator>
     );
 };

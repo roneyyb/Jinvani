@@ -28,7 +28,9 @@ const Audio = (props) => {
         }
     };
 
-    useEffect(fetchCategory, []);
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     return (
         <View style={{flex: 1, backgroundColor: "#ffffff"}}>
@@ -45,7 +47,7 @@ const Audio = (props) => {
                         />
                     );
                 }}
-                keyExtractor={(index) => index.toString()}
+                keyExtractor={(index) => index.mainListUID}
             />
             {loader ? <Loader /> : <View />}
         </View>

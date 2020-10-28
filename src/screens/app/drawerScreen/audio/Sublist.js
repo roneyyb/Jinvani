@@ -38,7 +38,9 @@ const Audio = (props) => {
         }
     };
 
-    useEffect(fetchCategory, []);
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     return (
         <View style={{flex: 1, backgroundColor: "#ffffff"}}>
@@ -49,11 +51,16 @@ const Audio = (props) => {
                         <CategoryComponent
                             key={index}
                             item={item}
-                            onCategoryPress={(item) => {
-                                onCategoryPress(item);
+                            onPress={() => {
+                                // onCategoryPress(item);
+                                props.navigation.navigate("audioPlayer");
                             }}
                         />
                     );
+                }}
+                keyExtractor={(index) => {
+                    console.log(index);
+                    return index.audioUID;
                 }}
             />
             {loader ? <Loader /> : <View />}
