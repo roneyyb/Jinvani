@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import {StyleSheet, Image, ActivityIndicator} from "react-native";
 import Ripple from "react-native-material-ripple";
-
+import Feather from "react-native-vector-icons/Feather";
+import {themeColor, globalHeight} from "../../constants/Dimensions";
 class WrappedRoundButton extends Component {
     render() {
         const {
@@ -10,16 +11,18 @@ class WrappedRoundButton extends Component {
             height,
             style,
             isLoading,
+            featherIcon,
             containerStyle,
         } = this.props;
+        console.log(featherIcon);
         return (
             <Ripple
                 style={[
                     styles.container,
                     {
-                        height: height || 50,
-                        width: height || 50,
-                        borderRadius: height / 2 || 25,
+                        height: height || globalHeight * 0.6,
+                        width: height || globalHeight * 0.6,
+                        borderRadius: height / 2 || globalHeight * 0.3,
                     },
                     containerStyle,
                 ]}
@@ -29,14 +32,18 @@ class WrappedRoundButton extends Component {
                         onPress();
                     }
                 }}
-                rippleContainerBorderRadius={height / 2 || 25}
+                rippleContainerBorderRadius={
+                    height / 2 || globalHeight * globalHeight * 0.3
+                }
             >
                 {isLoading ? (
                     <ActivityIndicator
                         size={30}
-                        color={"#500061"}
+                        color={themeColor}
                         style={{opacity: 0.5}}
                     />
+                ) : featherIcon ? (
+                    <Feather name={featherIcon} color={themeColor} size={25} />
                 ) : (
                     <Image
                         source={buttonSource}

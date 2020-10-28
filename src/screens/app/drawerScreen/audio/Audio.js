@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {View, FlatList} from "react-native";
 import {apiHandler, routeNames} from "../../../../server/apiHandler";
-import {Loader} from "../../../components";
+import {Loader, Header} from "../../../components";
 import CategoryComponent from "./component/CategoryComponent";
 
 const Audio = (props) => {
@@ -34,6 +34,17 @@ const Audio = (props) => {
 
     return (
         <View style={{flex: 1, backgroundColor: "#ffffff"}}>
+            <Header
+                featherIcon={"list"}
+                headerText={"MainList"}
+                containerStyle={{
+                    borderBottomWidth: 0.5,
+                    borderColor: "#2222",
+                }}
+                onPress={() => {
+                    props.navigation.openDrawer();
+                }}
+            />
             <FlatList
                 data={category}
                 renderItem={({item, index}) => {

@@ -13,7 +13,7 @@ import Feather1s from "react-native-vector-icons/Feather";
 //import {connect} from "react-redux";
 //import AppConstant from "../../constants/AppConstant";
 import {globalWidth, themeColor} from "../../../../constants/Dimensions";
-import {WrappedText} from "../../../components";
+import {WrappedText, Header} from "../../../components";
 //import {getNameFromNewsCategories} from "../../utils";
 import * as RNProgress from "react-native-progress";
 //import {destroyPlaylist} from "../../actions/playlistActions";
@@ -127,6 +127,17 @@ class AudioPlayer extends Component {
                     },
                 ]}
             >
+                <Header
+                    featherIcon={"arrow-left"}
+                    headerText={"Audio"}
+                    containerStyle={{
+                        borderBottomWidth: 0.5,
+                        borderColor: "#2222",
+                    }}
+                    onPress={() => {
+                        this.props.navigation.goBack();
+                    }}
+                />
                 {/* <PolbolHeader
                     type={"back"}
                     headerText={selectedLanguage.audio}
