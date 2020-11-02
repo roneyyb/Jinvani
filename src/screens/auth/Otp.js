@@ -62,10 +62,12 @@ class Otp extends Component {
             otpNumber: otp.toString(),
         });
 
+        console.log(response);
+
         if (response.success) {
             this.setState({isLoading: false});
             if (response.message == "WELCOME BACK") {
-                this.props.navigation.navigate("profileScreen");
+                this.props.navigation.navigate("audioScreen");
             } else {
                 this.props.navigation.navigate("profileScreen");
             }

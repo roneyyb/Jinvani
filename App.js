@@ -4,6 +4,7 @@ import {StatusBar, AppRegistry} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import Navigator from "./src/navigation/stack";
 import {SafeAreaProvider} from "react-native-safe-area-context";
+import TrackPlayer from "react-native-track-player";
 //import {Provider} from "react-redux";
 //import configureStore from "./src/store";
 
@@ -22,4 +23,4 @@ export default function App() {
     );
 }
 
-AppRegistry.registerComponent(() => require("./src/onStart/TrackInit"));
+TrackPlayer.registerPlaybackService(() => require("./src/onStart/TrackInit"));

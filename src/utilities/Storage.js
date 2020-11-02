@@ -27,3 +27,8 @@ export class Storage {
         await AsyncStorage.removeItem(key);
     }
 }
+
+export const StorageItemKeys = {
+    UserDetails: "UserDetails",
+    x_auth_token: "xAuthToken",
+};

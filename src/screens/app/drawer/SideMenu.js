@@ -16,7 +16,7 @@ const SideMenu = (props) => {
     logOut = async () => {
         try {
             await AsyncStorage.removeItem("userdata");
-            props.navigation.navigate("LoginScreen");
+            props.navigation.navigate("Auth");
         } catch (error) {
             console.log("Error while loggin out");
         }
@@ -89,12 +89,12 @@ const SideMenu = (props) => {
                     }}
                 />
                 <DrawerItem
-                    icon={() => (
-                        <Icon
-                            name="settings-outline"
-                            style={{fontSize: 2.8 * vh, color: "grey"}}
-                        />
-                    )}
+                    // icon={() => (
+                    //     <Icon
+                    //         name="settings-outline"
+                    //         style={{fontSize: 2.8 * vh, color: "grey"}}
+                    //     />
+                    // )}
                     label="Contactus  "
                     onPress={() => {}}
                 />

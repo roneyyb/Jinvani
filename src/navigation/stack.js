@@ -1,6 +1,9 @@
 import React, {Component} from "react";
 import {createStackNavigator} from "@react-navigation/stack";
 import {createDrawerNavigator} from "@react-navigation/drawer";
+//Splash Screen
+import Splash from "../onStart/splash";
+
 // Auth Screens
 import Login from "../screens/auth/Login";
 import Otp from "../screens/auth/Otp";
@@ -21,7 +24,8 @@ const Stack = createStackNavigator();
 
 const Auth = () => {
     return (
-        <Stack.Navigator initialRouteName={"profileScreen"} headerMode="none">
+        <Stack.Navigator initialRouteName={"loginScreen"} headerMode="none">
+            <Stack.Screen name="splashScreen" component={Splash} />
             <Stack.Screen name="otpScreen" component={Otp} />
             <Stack.Screen name="loginScreen" component={Login} />
             <Stack.Screen name="profileScreen" component={Profile} />

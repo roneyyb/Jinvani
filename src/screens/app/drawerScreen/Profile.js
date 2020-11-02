@@ -47,9 +47,7 @@ class Profile extends Component {
         });
         if (response.success) {
             this.setState({isLoading: false});
-            // this.props.navigation.navigate("otpScreen", {
-            //     mobileNumber: phone,
-            // });
+            this.props.navigation.navigate("audioScreen");
         } else {
             this.setState({
                 error: {fetchError: response.message},

@@ -3,22 +3,35 @@ import {View, FlatList} from "react-native";
 import {apiHandler, routeNames} from "../../../../server/apiHandler";
 import {Loader, Header} from "../../../components";
 import CategoryComponent from "./component/CategoryComponent";
+import {generatePlaylist} from "../../../../action/trackAction";
 
 const Audio = (props) => {
     const [loader, setLoader] = useState(false);
     const [category, setCategory] = useState([]);
     const [error, setError] = useState({});
 
-    const onCategoryPress = (item) => {
-        const {category, mainListUID} = item;
-        props.navigation.navigate("subListScreen", {
-            mainListUID: mainListUID,
-        });
+    const onCategoryPress = async (item) => {
+        try {
+            const {category, mainListUID} = item;
+            if (category != "AUDIO") {
+                props.navigation.navigate("subListScreen", {
+                    mainListUID: mainListUID,
+                });
+            } else {
+                const {audioID} = item;
+                console.log(audioID);
+                await generatePlaylist(audioID.audioUID);
+                // props.navigation.navigate("audioPlayer");
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const fetchCategory = async () => {
         setLoader(true);
         const response = await apiHandler(routeNames.MainList);
+        console.log("response from server =>", response);
         if (response.success) {
             setLoader(false);
             setCategory(response.data);

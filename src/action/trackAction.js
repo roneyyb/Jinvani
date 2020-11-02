@@ -1,16 +1,5 @@
-import {
-    DESTROY_PLAYLIST,
-    SAVE_PLAYLIST,
-    SET_PLAYER_STATE,
-    SET_TRACK,
-    TRACK_FETCH_FAILURE,
-    TRACK_FETCH_START,
-    TRACK_FETCH_SUCCESS,
-} from "./constants";
 import TrackPlayer from "react-native-track-player";
-import {languages} from "../containers/Language/languages";
-import axios from "axios";
-import server from "../constants/Server";
+import {apiHandler, routeNames} from "../server/apiHandler";
 
 const setupPlayer = async () => {
     await TrackPlayer.setupPlayer();
@@ -37,52 +26,75 @@ const setupPlayer = async () => {
     });
 };
 
-const setTracks = async (trackList, startIndex, getState) => {
-    const newsByIds = getState().news.byIds;
+const setTracks = async (audioData) => {
+    //const newsByIds = getState().news.byIds;
     await TrackPlayer.reset();
-    const tracks = trackList.map((track) => {
-        const newsItem = newsByIds[track];
-        return {
-            id: track,
-            url: newsItem.audioUrl,
-            title: newsItem.headline,
-            artist: newsItem.categories[0],
-            artwork: newsItem.images[0],
-        };
-    });
+    // const tracks = trackList.map((track) => {
+    //     const newsItem = newsByIds[track];
+    //     return {
+    //         id: track,
+    //         url: newsItem.audioUrl,
+    //         title: newsItem.headline,
+    //         artist: newsItem.categories[0],
+    //         artwork: newsItem.images[0],
+    //     };
+    // });
+    const tracks = [
+        {
+            id: audioData.createdAt,
+            url: audioData.audioURL,
+            title: audioData.title,
+            // artist: track.categories[0],
+            // artwork: track.images[0],
+        },
+    ];
+    console.log(tracks);
     await TrackPlayer.add(tracks);
-    await TrackPlayer.skip(trackList[startIndex]);
+    //await TrackPlayer.skip(trackList[startIndex]);
     await TrackPlayer.play();
 };
 
-const appendTracks = async (trackList) => {
-    const tracks = trackList.map((track) => {
-        return {
-            id: track._id,
-            url: track.audioUrl,
-            title: track.headline,
-            artist: track.categories[0],
-            artwork: track.images[0],
-        };
-    });
+const appendTracks = async (audioData) => {
+    const tracks = [
+        {
+            id: audioData.createdAt,
+            url: audioData.audioURL,
+            title: audioData.title,
+            // artist: track.categories[0],
+            // artwork: track.images[0],
+        },
+    ];
+
     await TrackPlayer.add(tracks);
 };
 
-export const generatePlaylistFromNews = (startIndex) => {
-    return async (dispatch, getState) => {
-        await setupPlayer();
-        const newsState = getState().news.news;
-        const newsList = [...newsState.news];
-        const payload = {
-            tracks: newsList,
-            currentTrack: newsList[startIndex],
-            identifier: newsState.identifier,
-            lastTime: newsState.lastTime,
-            paging: newsState.paging,
-        };
-        dispatch(savePlaylist(payload));
-        await setTracks(newsList, startIndex, getState);
-    };
+export const generatePlaylist = async (audioUID) => {
+    console.log(audioUID);
+    try {
+        const response = await apiHandler(routeNames.FetchAudio, audioUID);
+        console.log(response);
+        if (response.success) {
+            await setupPlayer();
+            await setTracks(response.data.audioData);
+        } else {
+            throw new Error("Error in Setting up Track Player");
+            //   setLoader(false);
+            //   setError({fetchError: response.message});
+        }
+    } catch (error) {
+        console.log(error);
+        throw new Error(error);
+    }
+    // const newsState = getState().news.news;
+    // const newsList = [...newsState.news];
+    // const payload = {
+    //     tracks: newsList,
+    //     currentTrack: newsList[startIndex],
+    //     identifier: newsState.identifier,
+    //     lastTime: newsState.lastTime,
+    //     paging: newsState.paging,
+    // };
+    // dispatch(savePlaylist(payload));
 };
 
 export const generatePlaylistFromTimeline = (startIndex) => {

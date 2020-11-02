@@ -1,7 +1,8 @@
 import axios from "axios";
 import {apiEndPoint} from "./endPoint";
 import {RouteList} from "./Route/route";
-import {Storage} from "../utilities/Storage";
+
+import {Storage, StorageItemKeys} from "../utilities/Storage";
 
 const handleError = (error) => {
     function isNetworkError(err) {
@@ -48,13 +49,18 @@ export const apiHandler = async (
                 options.url + "skip=" + skip + "&" + query + "=" + queryValue;
         }
 
+        if (route == routeNames.FetchAudio) {
+            options.url = options.url + Data;
+            options.data = {};
+        }
+        console.log(options);
         const response = await axios(options);
         const x_auth_token = response.headers["x-auth-token"];
         if (x_auth_token) {
             axios.defaults.headers.common = {
                 "x-auth-token": x_auth_token,
             };
-            await Storage.setItem("x-auth-token", x_auth_token);
+            await Storage.setItem(StorageItemKeys.x_auth_token, x_auth_token);
         }
         const {data} = response;
 
@@ -73,4 +79,5 @@ export const routeNames = {
     UpdateProfile: "UpdateProfile",
     MainList: "MainList",
     SubList: "SubList",
+    FetchAudio: "FetchAudio",
 };

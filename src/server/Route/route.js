@@ -24,4 +24,8 @@ export const RouteList = {
         url: version1 + "list/sub/all?",
         method: "GET",
     },
+    FetchAudio: {
+        url: version1 + "listen/data/",
+        method: "GET",
+    },
 };
