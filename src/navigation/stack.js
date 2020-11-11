@@ -25,7 +25,6 @@ const Stack = createStackNavigator();
 const Auth = () => {
     return (
         <Stack.Navigator initialRouteName={"loginScreen"} headerMode="none">
-            <Stack.Screen name="splashScreen" component={Splash} />
             <Stack.Screen name="otpScreen" component={Otp} />
             <Stack.Screen name="loginScreen" component={Login} />
             <Stack.Screen name="profileScreen" component={Profile} />
@@ -61,7 +60,8 @@ const DrawerNavigator = () => {
 
 export default function App() {
     return (
-        <Stack.Navigator initialRouteName={"Drawer"} headerMode={"none"}>
+        <Stack.Navigator initialRouteName={"splashScreen"} headerMode={"none"}>
+            <Stack.Screen name="splashScreen" component={Splash} />
             <Stack.Screen name="Auth" component={Auth} />
             <Stack.Screen name="Drawer" component={DrawerNavigator} />
         </Stack.Navigator>

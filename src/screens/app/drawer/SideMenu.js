@@ -18,7 +18,7 @@ const SideMenu = (props) => {
         try {
             await AsyncStorage.removeItem(StorageItemKeys.UserDetails);
             await AsyncStorage.removeItem(StorageItemKeys.x_auth_token);
-            props.navigation.navigate("Auth");
+            props.navigation.replace("splashScreen");
         } catch (error) {
             console.log("Error while loggin out");
         }
@@ -56,7 +56,16 @@ const SideMenu = (props) => {
                         props.navigation.navigate("HomeScreen");
                     }}
                 />
-                <DrawerItem label="Contact us  " onPress={() => {}} />
+                <DrawerItem
+                    icon={() => (
+                        <Icon
+                            name="account-box-outline"
+                            style={{fontSize: 2.8 * vh, color: "grey"}}
+                        />
+                    )}
+                    label="Contact us  "
+                    onPress={() => {}}
+                />
                 <DrawerItem
                     icon={() => (
                         <Icon

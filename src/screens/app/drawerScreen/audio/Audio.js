@@ -20,8 +20,8 @@ const Audio = (props) => {
             } else {
                 const {audioID} = item;
                 console.log(audioID);
-                await generatePlaylist(audioID.audioUID);
-                // props.navigation.navigate("audioPlayer");
+                //await generatePlaylist(audioID.audioUID);
+                props.navigation.navigate("audioPlayer");
             }
         } catch (error) {
             console.log(error);

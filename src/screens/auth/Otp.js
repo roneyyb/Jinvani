@@ -44,7 +44,7 @@ class Otp extends Component {
 
     resendOtp = async () => {
         this.setState({isLoading: true, timer: TIMER});
-        const response = await apiHandler(routeNames.ResendOtp);
+        const response = await apiHandler(routeNames.ResendOtp, {});
         if (response.success) {
             this.setState({isLoading: false});
             this.setTimerForOTP();
@@ -67,7 +67,7 @@ class Otp extends Component {
         if (response.success) {
             this.setState({isLoading: false});
             if (response.data == "WELCOME BACK") {
-                this.props.navigation.navigate("audioScreen");
+                this.props.navigation.navigate("Drawer");
             } else {
                 this.props.navigation.navigate("profileScreen");
             }

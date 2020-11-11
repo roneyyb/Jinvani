@@ -225,7 +225,7 @@ class AudioPlayer extends Component {
                                     )}
                                 </CustomText>
                             </View> */}
-                    <Progress />
+                    {/* <Progress /> */}
                     <View style={{flexDirection: "row", marginTop: 20}}>
                         <View
                             style={{
