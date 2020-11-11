@@ -66,7 +66,7 @@ class Otp extends Component {
 
         if (response.success) {
             this.setState({isLoading: false});
-            if (response.message == "WELCOME BACK") {
+            if (response.data == "WELCOME BACK") {
                 this.props.navigation.navigate("audioScreen");
             } else {
                 this.props.navigation.navigate("profileScreen");
@@ -135,7 +135,7 @@ class Otp extends Component {
                         <OTPTextInput
                             ref={(e) => (this.otpInput = e)}
                             inputCount={6}
-                            textInputStyle={{width: 40}}
+                            textInputStyle={{width: globalWidth}}
                             tintColor={"#EF8B31"}
                             handleTextChange={(otp) => {
                                 this.setState({otp});

@@ -7,7 +7,7 @@ export default class Splash extends Component {
         if (isLoggedIn) {
             this.props.navigation.navigate("audioScreen");
         } else {
-            this.props.navigation.navigate("loginScreen");
+            this.props.navigation.navigate("Auth");
         }
     }
     render() {
