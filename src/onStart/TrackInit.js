@@ -1,6 +1,6 @@
 import TrackPlayer from "react-native-track-player";
 
-export default async function () {
+module.exports = async function () {
     // try {
     //     const trackPlayer = await TrackPlayer.setupPlayer();
     //     console.log("Track Player Initialized",trackPlayer);
@@ -65,4 +65,4 @@ export default async function () {
         console.log("PlayBackState =>", state);
         // store.dispatch(setPlayerState(state));
     });
-}
+};

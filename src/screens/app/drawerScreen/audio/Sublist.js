@@ -9,13 +9,6 @@ const Audio = (props) => {
     const [category, setCategory] = useState([]);
     const [error, setError] = useState({});
     const [mainListId, setId] = useState(props.route.params["mainListUID"]);
-    console.log(props.route.params);
-    const onCategoryPress = (item) => {
-        const {category} = item;
-        if (category == "AUDIO") {
-        } else {
-        }
-    };
 
     const fetchCategory = async () => {
         try {

@@ -42,7 +42,7 @@ const setTracks = async (audioData) => {
     const tracks = [
         {
             id: audioData.createdAt,
-            url: audioData.audioURL,
+            url: audioData.url,
             title: audioData.title,
             // artist: track.categories[0],
             // artwork: track.images[0],
@@ -72,7 +72,7 @@ export const generatePlaylist = async (audioUID) => {
     console.log(audioUID);
     try {
         const response = await apiHandler(routeNames.FetchAudio, audioUID);
-        console.log(response);
+        console.log("apiHandlerResponse =>", response);
         if (response.success) {
             await setupPlayer();
             await setTracks(response.data.audioData);

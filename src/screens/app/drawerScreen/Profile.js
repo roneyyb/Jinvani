@@ -38,6 +38,7 @@ class Profile extends Component {
     sendDetailsToServer = async () => {
         this.setState({isLoading: true});
         const {firstName, lastName, language, salutaion, gender} = this.state;
+        console.log(gender);
         const response = await apiHandler(routeNames.UpdateProfile, {
             firstName,
             lastName,
@@ -45,9 +46,10 @@ class Profile extends Component {
             lang: language,
             saluation: salutaion,
         });
+
         if (response.success) {
             this.setState({isLoading: false});
-            this.props.navigation.navigate("audioScreen");
+            this.props.navigation.navigate("Drawer");
         } else {
             this.setState({
                 error: {fetchError: response.message},

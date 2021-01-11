@@ -66,7 +66,7 @@ class Otp extends Component {
 
         if (response.success) {
             this.setState({isLoading: false});
-            if (response.data == "WELCOME BACK") {
+            if (response.data.show == "WELCOME BACK") {
                 this.props.navigation.navigate("Drawer");
             } else {
                 this.props.navigation.navigate("profileScreen");
