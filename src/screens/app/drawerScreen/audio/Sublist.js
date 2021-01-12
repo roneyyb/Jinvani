@@ -21,7 +21,6 @@ const Audio = (props) => {
                 "mainListUID",
                 mainListId,
             );
-            console.log(response);
             if (response.success) {
                 setLoader(false);
                 setCategory(response.data[0].audioList);
@@ -59,13 +58,15 @@ const Audio = (props) => {
                                 item={item}
                                 onPress={() => {
                                     // onCategoryPress(item);
-                                    props.navigation.navigate("audioPlayer");
+                                    props.navigation.navigate(
+                                        "audioPlayer",
+                                        {},
+                                    );
                                 }}
                             />
                         );
                     }}
                     keyExtractor={(index) => {
-                        console.log(index);
                         return index.audioUID;
                     }}
                 />
