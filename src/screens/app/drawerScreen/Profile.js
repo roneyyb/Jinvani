@@ -30,7 +30,9 @@ class Profile extends Component {
         salutaion: salutationFields[0].value,
         error: {},
         isLoading: false,
-        update: (this.props.route && this.props.route.params.update) || false,
+        update:
+            (this.props.route.params && this.props.route.params.update) ||
+            false,
     };
 
     setGender = (gender) => {

@@ -83,15 +83,20 @@ const SideMenu = (props) => {
                                 marginLeft: vh * 1.8,
                             }}
                         >
-                            <WrappedText
-                                text={
-                                    (userDetail &&
-                                        userDetail.firstName[0] +
-                                            userDetail.lastName[0]) ||
-                                    ""
-                                }
-                                textStyle={{color: "#ffffff", fontSize: 2 * vh}}
-                            />
+                            {userDetail && userDetail["firstName"] && (
+                                <WrappedText
+                                    text={
+                                        (userDetail &&
+                                            userDetail["firstName"][0] +
+                                                userDetail["lastName"][0]) ||
+                                        ""
+                                    }
+                                    textStyle={{
+                                        color: "#ffffff",
+                                        fontSize: 2 * vh,
+                                    }}
+                                />
+                            )}
                         </View>
                         <View
                             style={{
@@ -102,11 +107,11 @@ const SideMenu = (props) => {
                             <WrappedText
                                 text={
                                     (userDetail &&
-                                        userDetail.saluation +
+                                        userDetail["saluation"] +
                                             ". " +
-                                            userDetail.firstName +
+                                            userDetail["firstName"] +
                                             " " +
-                                            userDetail.lastName) ||
+                                            userDetail["lastName"]) ||
                                     ""
                                 }
                                 textStyle={{color: "#000000", fontSize: 2 * vh}}
@@ -114,7 +119,7 @@ const SideMenu = (props) => {
                             <WrappedText
                                 text={
                                     (userDetail &&
-                                        (userDetail.lang[0] == "H"
+                                        (userDetail["lang"][0] == "H"
                                             ? "Hindi"
                                             : "English")) ||
                                     ""
