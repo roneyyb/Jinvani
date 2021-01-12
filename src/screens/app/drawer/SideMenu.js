@@ -22,9 +22,9 @@ const SideMenu = (props) => {
     //console.log("userDetail =>", userDetail);
     const logOut = async () => {
         try {
-            await AsyncStorage.removeItem(StorageItemKeys.UserDetails);
+            await AsyncStorage.removeItem("userDetail");
             await AsyncStorage.removeItem(StorageItemKeys.x_auth_token);
-            props.navigation.replace("splashScreen");
+            props.navigation.replace("Auth");
         } catch (error) {
             console.log("Error while loggin out");
         }
