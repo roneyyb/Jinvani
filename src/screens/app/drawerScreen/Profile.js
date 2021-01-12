@@ -20,6 +20,7 @@ import {
 } from "../../../constants/Dimensions";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {apiHandler, routeNames} from "../../../server/apiHandler";
+import {Storage} from "../../../utilities/Storage";
 class Profile extends Component {
     state = {
         firstName: "",
@@ -29,6 +30,7 @@ class Profile extends Component {
         salutaion: salutationFields[0].value,
         error: {},
         isLoading: false,
+        update: (this.props.route && this.props.route.params.update) || false,
     };
 
     setGender = (gender) => {
@@ -38,18 +40,19 @@ class Profile extends Component {
     sendDetailsToServer = async () => {
         this.setState({isLoading: true});
         const {firstName, lastName, language, salutaion, gender} = this.state;
-        console.log(gender);
-        const response = await apiHandler(routeNames.UpdateProfile, {
+        const data = {
             firstName,
             lastName,
             gender,
             lang: language,
             saluation: salutaion,
-        });
+        };
+        const response = await apiHandler(routeNames.UpdateProfile, data);
 
         if (response.success) {
+            await Storage.setItem("userDetail", {...data});
             this.setState({isLoading: false});
-            this.props.navigation.navigate("Drawer");
+            this.props.navigation.replace("Drawer");
         } else {
             this.setState({
                 error: {fetchError: response.message},
@@ -77,8 +80,18 @@ class Profile extends Component {
         }
     };
 
+    async componentDidMount() {
+        try {
+            const userDetail = await Storage.getItem("userDetail");
+            console.log(userDetail);
+            this.setState({...userDetail});
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     render() {
-        const {firstName, lastName, error, isLoading} = this.state;
+        const {firstName, lastName, error, isLoading, update} = this.state;
         return (
             <View style={{flex: 1}}>
                 <View style={styles.Container}>
@@ -89,7 +102,7 @@ class Profile extends Component {
                         }}
                     >
                         <WrappedText
-                            text={"Add Details"}
+                            text={update ? "Update Details" : "Add Details"}
                             textStyle={styles.headingStyle}
                             fontFamily={"IBMPlexSans-Medium"}
                         />
@@ -184,9 +197,10 @@ class Profile extends Component {
                                     justifyContent: "flex-start",
                                 }}
                                 labelStyle={styles.dropDownText}
-                                onChangeItem={(gender) => {
+                                onChangeItem={(lang) => {
+                                    console.log(lang);
                                     this.setState({
-                                        gender: gender.value,
+                                        language: lang.value,
                                     });
                                 }}
                             />
@@ -203,7 +217,7 @@ class Profile extends Component {
                 <View style={styles.buttonContainer}>
                     <WrappedRectangleButton
                         containerStyle={styles.buttonStyle}
-                        buttonText={"Submit"}
+                        buttonText={update ? "Update  " : "Submit "}
                         textStyle={styles.textStyle}
                         onPress={() => {
                             this.submitDetails();
@@ -249,14 +263,14 @@ const styles = StyleSheet.create({
     },
     buttonStyle: {
         height: globalHeight * 0.5,
-        width: globalWidth * 2,
+        marginHorizontal: "5%",
+        //width: globalWidth * 2,
         borderRadius: globalHeight * 0.1,
         backgroundColor: "#EF8B31",
     },
     buttonContainer: {
-        position: "absolute",
+        backgroundColor: "#ffffff",
         bottom: "5%",
-        right: "5%",
     },
     textStyle: {
         color: "#FFFFFF",

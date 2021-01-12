@@ -13,6 +13,7 @@ import {
     errorColor,
 } from "../../constants/Dimensions";
 import {apiHandler, routeNames} from "../../server/apiHandler";
+import {Storage} from "../../utilities/Storage";
 
 //import {apiEndPoint} from "../../constants/server";
 const TIMER = 5;
@@ -67,6 +68,7 @@ class Otp extends Component {
         if (response.success) {
             this.setState({isLoading: false});
             if (response.data.show == "WELCOME BACK") {
+                await Storage.setItem("userDetail", response.data.profile);
                 this.props.navigation.navigate("Drawer");
             } else {
                 this.props.navigation.navigate("profileScreen");
@@ -90,7 +92,6 @@ class Otp extends Component {
 
     componentDidMount() {
         this.setTimerForOTP();
-        //this.sendMail();
     }
 
     componentDidUpdate(prevProps, prevState) {

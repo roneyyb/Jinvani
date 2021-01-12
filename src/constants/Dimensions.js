@@ -27,6 +27,13 @@ export const FontFamily = {
     IBMPSB: "IBMPlexSans-SemiBold",
 };
 
+export const commonStyle = StyleSheet.create({
+    containerStyle: {
+        backgroundColor: "#ffffff",
+        flex: 1,
+    },
+});
+
 export const genderFields = [
     {
         label: "Male",
