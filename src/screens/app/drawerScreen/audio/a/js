@@ -22,6 +22,15 @@ import parser from "subtitles-parser";
 let deviceWidth = Dimensions.get("window").width;
 
 class Progress extends ProgressComponent {
+    constructor(props) {
+        super(props);
+        // this.state = {
+        //     subtitleFile: [],
+        //     index: 0,
+        //     currentSubTitle: {},
+        // };
+    }
+
     getFormattedString(position) {
         const date = new Date(0);
         date.setSeconds(position);
@@ -54,9 +63,9 @@ class Progress extends ProgressComponent {
         const srt = await Axios.get(
             "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
         );
-        //console.log(typeof srt.data, srt.data.length);
-        const data = parser.fromSrt(srt.data, true);
-        //this.setState({subtitleFile: data, index: 0, currentSubTitle: {}});
+        console.log(typeof srt.data, srt.data.length);
+        //const data = parser.fromSrt(srt.data, true);
+        //this.setState({subtitleFile: data});
 
         //console.log(data.length, data[0], data[1], data[2]);
     };
@@ -64,14 +73,18 @@ class Progress extends ProgressComponent {
     componentDidMount() {
         this.fetchSrt();
     }
+
     render() {
         const progress =
             this.state.duration !== 0 &&
             this.state.position / this.state.duration;
-        const positionString = this.getFormattedString(this.state.position);
-        const durationString = this.getFormattedString(this.state.duration);
-        console.log(progress, positionString, durationString);
         console.log(this.state);
+        const positionString = "";
+        const durationString = -"";
+        //const positionString = this.getFormattedString(this.state.position);
+        //const durationString = this.getFormattedString(this.state.duration);
+        //console.log(progress, positionString, durationString);
+        //console.log(this.state.position);
         return (
             <View style={{marginTop: 10}}>
                 <RNProgress.Bar
@@ -141,19 +154,6 @@ class AudioPlayer extends Component {
                 <Feather1s style={{color: "white"}} size={30} name={"pause"} />
             );
         }
-    }
-
-    fetchSrt = async () => {
-        const srt = await Axios.get(
-            "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
-        );
-        console.log(typeof srt.data, srt.data.length);
-        const data = parser.fromSrt(srt.data, true);
-        console.log(data.length, data[0]);
-    };
-
-    componentDidMount() {
-        this.fetchSrt();
     }
 
     render() {

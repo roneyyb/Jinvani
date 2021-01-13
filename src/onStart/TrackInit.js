@@ -16,14 +16,6 @@ module.exports = async function () {
         TrackPlayer.pause();
     });
 
-    TrackPlayer.addEventListener("remote-next", () => {
-        TrackPlayer.skipToNext();
-    });
-
-    TrackPlayer.addEventListener("remote-previous", () => {
-        TrackPlayer.skipToPrevious();
-    });
-
     TrackPlayer.addEventListener("remote-stop", () => {
         console.log("remoteStop");
         TrackPlayer.destroy();

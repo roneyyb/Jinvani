@@ -8,8 +8,8 @@ const setupPlayer = async () => {
         capabilities: [
             TrackPlayer.CAPABILITY_PLAY,
             TrackPlayer.CAPABILITY_PAUSE,
-            TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-            TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+            // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+            // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
             TrackPlayer.CAPABILITY_STOP,
         ],
         compactCapabilities: [
@@ -17,11 +17,11 @@ const setupPlayer = async () => {
             TrackPlayer.CAPABILITY_PAUSE,
         ],
         notificationCapabilities: [
-            TrackPlayer.CAPABILITY_PLAY,
-            TrackPlayer.CAPABILITY_PAUSE,
-            TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-            TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-            TrackPlayer.CAPABILITY_STOP,
+            //TrackPlayer.CAPABILITY_PLAY,
+            //TrackPlayer.CAPABILITY_PAUSE,
+            // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+            // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+            //TrackPlayer.CAPABILITY_STOP,
         ],
     });
 };
@@ -42,7 +42,7 @@ const setTracks = async (audioData) => {
     const tracks = [
         {
             id: audioData.createdAt,
-            url: audioData.url,
+            url: audioData.audioURL,
             title: audioData.title,
             // artist: track.categories[0],
             // artwork: track.images[0],
@@ -60,6 +60,7 @@ const appendTracks = async (audioData) => {
             id: audioData.createdAt,
             url: audioData.audioURL,
             title: audioData.title,
+
             // artist: track.categories[0],
             // artwork: track.images[0],
         },
