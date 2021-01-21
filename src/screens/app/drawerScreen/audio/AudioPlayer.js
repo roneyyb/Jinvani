@@ -116,12 +116,12 @@ class Progress extends ProgressComponent {
   setSubTitle = () => {
     this.setState((state) => {
       return {
-        currentSubTitle: state.subtitleFile[state.index + 1],
-        index: state.index + 1,
+        currentSubTitle: state.subtitleFile[this.index + 1],
       };
     });
+    this.index++;
   };
-  matchSubtitleFile(time) {
+  matchSubtitleFile = (time) => {
     console.log(time);
     const { currentSubTitle, index, subtitleFile } = this.state;
     console.log(currentSubTitle, index, subtitleFile[0]);
@@ -139,7 +139,7 @@ class Progress extends ProgressComponent {
         this.setSubTitle();
       }
     }
-  }
+  };
   fetchSrt = async () => {
     const srt = await Axios.get(
       "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
@@ -148,13 +148,22 @@ class Progress extends ProgressComponent {
     const data = parser.fromSrt(srt.data, true);
     this.setState({
       subtitleFile: data,
-      index: 0,
+
       currentSubTitle: undefined,
       subTitleLoaded: true,
     });
-
+    this.index = 0;
     console.log(data.length, data[0], data[1], data[2]);
   };
+
+  componentDidUpdate(prevState) {
+    if (
+      this.state.subTitleLoaded &&
+      prevState.position != this.state.position
+    ) {
+      this.matchSubtitleFile(this.state.position * 1000);
+    }
+  }
 
   render() {
     const progress =
@@ -162,9 +171,6 @@ class Progress extends ProgressComponent {
     const positionString = this.getFormattedString(this.state.position);
     const durationString = this.getFormattedString(this.state.duration);
     //console.log(this.state);
-    if (this.state.subTitleLoaded) {
-      this.matchSubtitleFile(this.state.position * 1000);
-    }
 
     return (
       <View style={{ marginTop: 10 }}>
