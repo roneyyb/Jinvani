@@ -1,19 +1,19 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import TrackPlayer, {ProgressComponent} from "react-native-track-player";
+import TrackPlayer, { ProgressComponent } from "react-native-track-player";
 import FastImage from "react-native-fast-image";
 import Feather1s from "react-native-vector-icons/Feather";
 //import {connect} from "react-redux";
 //import AppConstant from "../../constants/AppConstant";
-import {globalWidth, themeColor} from "../../../../constants/Dimensions";
-import {WrappedText, Header} from "../../../components";
+import { globalWidth, themeColor } from "../../../../constants/Dimensions";
+import { WrappedText, Header } from "../../../components";
 //import {getNameFromNewsCategories} from "../../utils";
 import * as RNProgress from "react-native-progress";
 import Axios from "axios";
@@ -21,175 +21,268 @@ import Axios from "axios";
 import parser from "subtitles-parser";
 let deviceWidth = Dimensions.get("window").width;
 
+// class Progress extends ProgressComponent {
+//     getFormattedString(position) {
+//         const date = new Date(0);
+//         date.setSeconds(position);
+//         const timeString = date.toISOString().substr(14, 5);
+//         return timeString;
+//     }
+
+//     // matchSubtitleFile(time) {
+//     //     const {currentSubTitle, index, subtitleFile} = this.state;
+//     //     if (
+//     //         !currentSubTitle &&
+//     //         time >= subtitleFile[0].startTime &&
+//     //         time <= subtitleFile[0].endTime
+//     //     ) {
+//     //         this.setState({currentSubTitle: this.state.subtitleFile[index]});
+//     //     } else {
+//     //         const {startTime, endTime} = currentSubTitle;
+
+//     //         if (time >= startTime && time <= endTime) {
+//     //         } else {
+//     //             this.setState({
+//     //                 currentSubTitle: this.state.subtitleFile[index + 1],
+//     //                 index: index + 1,
+//     //             });
+//     //         }
+//     //     }
+//     // }
+
+//     fetchSrt = async () => {
+//         const srt = await Axios.get(
+//             "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
+//         );
+//         //console.log(typeof srt.data, srt.data.length);
+//         const data = parser.fromSrt(srt.data, true);
+//         //this.setState({subtitleFile: data, index: 0, currentSubTitle: {}});
+
+//         //console.log(data.length, data[0], data[1], data[2]);
+//     };
+
+//     componentDidMount() {
+//         this.fetchSrt();
+//     }
+//     render() {
+//         const progress =
+//             this.state.duration !== 0 &&
+//             this.state.position / this.state.duration;
+//         const positionString = this.getFormattedString(this.state.position);
+//         const durationString = this.getFormattedString(this.state.duration);
+//         console.log(progress, positionString, durationString);
+//         console.log(this.state);
+//         return (
+//             <View style={{marginTop: 10}}>
+//                 <RNProgress.Bar
+//                     height={2}
+//                     color={themeColor}
+//                     borderColor={themeColor}
+//                     progress={progress}
+//                     width={globalWidth * 9}
+//                     useNativeDriver={true}
+//                     animationType={"timing"}
+//                 />
+//                 <View style={{marginTop: 4, flexDirection: "row"}}>
+//                     <View style={{flex: 1}}>
+//                         <WrappedText
+//                             style={{color: themeColor}}
+//                             text={positionString}
+//                         />
+//                     </View>
+//                     <View>
+//                         <WrappedText
+//                             style={{color: themeColor}}
+//                             text={durationString}
+//                         />
+//                     </View>
+//                 </View>
+//             </View>
+//         );
+//     }
+// }
 class Progress extends ProgressComponent {
-    getFormattedString(position) {
-        const date = new Date(0);
-        date.setSeconds(position);
-        const timeString = date.toISOString().substr(14, 5);
-        return timeString;
+  constructor(props) {
+    super(props);
+    this.fetchSrt();
+  }
+  getFormattedString(position) {
+    const date = new Date(0);
+    date.setSeconds(position);
+    const timeString = date.toISOString().substr(14, 5);
+    return timeString;
+  }
+
+  setSubTitle = () => {
+    this.setState((state) => {
+      return {
+        currentSubTitle: state.subtitleFile[state.index + 1],
+        index: state.index + 1,
+      };
+    });
+  };
+  matchSubtitleFile(time) {
+    console.log(time);
+    const { currentSubTitle, index, subtitleFile } = this.state;
+    console.log(currentSubTitle, index, subtitleFile[0]);
+    if (
+      !currentSubTitle &&
+      time >= subtitleFile[0].startTime &&
+      time <= subtitleFile[0].endTime
+    ) {
+      this.setState({ currentSubTitle: this.state.subtitleFile[index] });
+    } else if (currentSubTitle) {
+      const { startTime, endTime } = currentSubTitle;
+
+      if (time >= startTime && time <= endTime) {
+      } else {
+        this.setSubTitle();
+      }
+    }
+  }
+  fetchSrt = async () => {
+    const srt = await Axios.get(
+      "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
+    );
+    //console.log(typeof srt.data, srt.data.length);
+    const data = parser.fromSrt(srt.data, true);
+    this.setState({
+      subtitleFile: data,
+      index: 0,
+      currentSubTitle: undefined,
+      subTitleLoaded: true,
+    });
+
+    console.log(data.length, data[0], data[1], data[2]);
+  };
+
+  render() {
+    const progress =
+      this.state.duration !== 0 && this.state.position / this.state.duration;
+    const positionString = this.getFormattedString(this.state.position);
+    const durationString = this.getFormattedString(this.state.duration);
+    //console.log(this.state);
+    if (this.state.subTitleLoaded) {
+      this.matchSubtitleFile(this.state.position * 1000);
     }
 
-    // matchSubtitleFile(time) {
-    //     const {currentSubTitle, index, subtitleFile} = this.state;
-    //     if (
-    //         !currentSubTitle &&
-    //         time >= subtitleFile[0].startTime &&
-    //         time <= subtitleFile[0].endTime
-    //     ) {
-    //         this.setState({currentSubTitle: this.state.subtitleFile[index]});
-    //     } else {
-    //         const {startTime, endTime} = currentSubTitle;
-
-    //         if (time >= startTime && time <= endTime) {
-    //         } else {
-    //             this.setState({
-    //                 currentSubTitle: this.state.subtitleFile[index + 1],
-    //                 index: index + 1,
-    //             });
-    //         }
-    //     }
-    // }
-
-    fetchSrt = async () => {
-        const srt = await Axios.get(
-            "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
-        );
-        //console.log(typeof srt.data, srt.data.length);
-        const data = parser.fromSrt(srt.data, true);
-        //this.setState({subtitleFile: data, index: 0, currentSubTitle: {}});
-
-        //console.log(data.length, data[0], data[1], data[2]);
-    };
-
-    componentDidMount() {
-        this.fetchSrt();
-    }
-    render() {
-        const progress =
-            this.state.duration !== 0 &&
-            this.state.position / this.state.duration;
-        const positionString = this.getFormattedString(this.state.position);
-        const durationString = this.getFormattedString(this.state.duration);
-        console.log(progress, positionString, durationString);
-        console.log(this.state);
-        return (
-            <View style={{marginTop: 10}}>
-                <RNProgress.Bar
-                    height={2}
-                    color={themeColor}
-                    borderColor={themeColor}
-                    progress={progress}
-                    width={globalWidth * 9}
-                    useNativeDriver={true}
-                    animationType={"timing"}
-                />
-                <View style={{marginTop: 4, flexDirection: "row"}}>
-                    <View style={{flex: 1}}>
-                        <WrappedText
-                            style={{color: themeColor}}
-                            text={positionString}
-                        />
-                    </View>
-                    <View>
-                        <WrappedText
-                            style={{color: themeColor}}
-                            text={durationString}
-                        />
-                    </View>
-                </View>
-            </View>
-        );
-    }
+    return (
+      <View style={{ marginTop: 10 }}>
+        <View>
+          <WrappedText
+            text={
+              (this.state.subtitleFile && this.state.subtitleFile["text"]) || ""
+            }
+            textStyle={{ color: "#000000" }}
+          />
+        </View>
+        <RNProgress.Bar
+          height={2}
+          color={themeColor}
+          borderColor={themeColor}
+          progress={progress}
+          width={globalWidth * 9}
+          useNativeDriver={true}
+          animationType={"timing"}
+        />
+        <View style={{ marginTop: 4, flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <WrappedText style={{ color: themeColor }} text={positionString} />
+          </View>
+          <View>
+            <WrappedText style={{ color: themeColor }} text={durationString} />
+          </View>
+        </View>
+      </View>
+    );
+  }
 }
-
 class AudioPlayer extends Component {
-    state = {
-        track: {},
-        play: true,
-    };
+  state = {
+    track: {},
+    play: true,
+  };
 
-    constructor(props) {
-        super(props);
-        this.toggleMainButton = this.toggleMainButton.bind(this);
+  constructor(props) {
+    super(props);
+    this.toggleMainButton = this.toggleMainButton.bind(this);
+  }
+
+  toggleMainButton() {
+    //const playerState = this.props.playlistState.playerState;
+    //console.log(playerState);
+    const { play } = this.state;
+    if (!play) {
+      TrackPlayer.play();
+    } else {
+      TrackPlayer.pause();
     }
 
-    toggleMainButton() {
-        //const playerState = this.props.playlistState.playerState;
-        //console.log(playerState);
-        const {play} = this.state;
-        if (!play) {
-            TrackPlayer.play();
-        } else {
-            TrackPlayer.pause();
-        }
+    this.setState({ play: !play });
+  }
 
-        this.setState({play: !play});
+  getMainButtonIcon() {
+    //const playerState = this.props.playlistState.playerState;
+    if (!this.state.play) {
+      return (
+        <Feather1s
+          style={{ marginLeft: 4, color: "white" }}
+          size={30}
+          name={"play"}
+        />
+      );
+    } else {
+      return <Feather1s style={{ color: "white" }} size={30} name={"pause"} />;
     }
+  }
 
-    getMainButtonIcon() {
-        //const playerState = this.props.playlistState.playerState;
-        if (!this.state.play) {
-            return (
-                <Feather1s
-                    style={{marginLeft: 4, color: "white"}}
-                    size={30}
-                    name={"play"}
-                />
-            );
-        } else {
-            return (
-                <Feather1s style={{color: "white"}} size={30} name={"pause"} />
-            );
-        }
-    }
+  fetchSrt = async () => {
+    const srt = await Axios.get(
+      "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
+    );
+    console.log(typeof srt.data, srt.data.length);
+    const data = parser.fromSrt(srt.data, true);
+    console.log(data.length, data[0]);
+  };
 
-    fetchSrt = async () => {
-        const srt = await Axios.get(
-            "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
-        );
-        console.log(typeof srt.data, srt.data.length);
-        const data = parser.fromSrt(srt.data, true);
-        console.log(data.length, data[0]);
-    };
+  componentDidMount() {
+    this.fetchSrt();
+  }
 
-    componentDidMount() {
-        this.fetchSrt();
-    }
+  render() {
+    // const {selectedLanguage, playlistState, theme} = this.props;
+    // const currentTrack = playlistState.currentTrack;
+    // console.log(currentTrack);
+    // const loading =
+    //     playlistState.tracks.length === 0 || currentTrack === null;
+    const loading = false;
+    // let trackInfo = this.props.newsById[currentTrack] || {
+    //     images: [],
+    //     categories: [],
+    // };
 
-    render() {
-        // const {selectedLanguage, playlistState, theme} = this.props;
-        // const currentTrack = playlistState.currentTrack;
-        // console.log(currentTrack);
-        // const loading =
-        //     playlistState.tracks.length === 0 || currentTrack === null;
-        const loading = false;
-        // let trackInfo = this.props.newsById[currentTrack] || {
-        //     images: [],
-        //     categories: [],
-        // };
-
-        return (
-            <View
-                style={[
-                    styles.container,
-                    {
-                        backgroundColor: "#ffffffff",
-                    },
-                ]}
-            >
-                <Header
-                    featherIcon={"arrow-left"}
-                    headerText={"Audio"}
-                    containerStyle={{
-                        borderBottomWidth: 0.5,
-                        borderColor: "#2222",
-                    }}
-                    onPress={() => {
-                        this.props.navigation.goBack();
-                        TrackPlayer.destroy();
-                    }}
-                />
-                {/* <PolbolHeader
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: "#ffffffff",
+          },
+        ]}
+      >
+        <Header
+          featherIcon={"arrow-left"}
+          headerText={"Audio"}
+          containerStyle={{
+            borderBottomWidth: 0.5,
+            borderColor: "#2222",
+          }}
+          onPress={() => {
+            this.props.navigation.goBack();
+            TrackPlayer.destroy();
+          }}
+        />
+        {/* <PolbolHeader
                     type={"back"}
                     headerText={selectedLanguage.audio}
                     navigation={this.props.navigation}
@@ -217,43 +310,43 @@ class AudioPlayer extends Component {
                     }const loading =
         //     playlistState.tracks.length === 0 || currentTrack === null;
                 /> */}
-                {loading && <Loader />}
-                {!loading && (
-                    <View style={{flex: 1, flexDirection: "column"}}>
-                        <View
-                            style={{
-                                flex: 1,
-                                justifyContent: "center",
-                                // backgroundColor: themeColor,
-                            }}
-                        >
-                            <View
-                                style={{
-                                    marginVertical: 20,
-                                    width: deviceWidth - 40,
-                                    alignItems: "center",
-                                    borderRadius: 20,
-                                    overflow: "hidden",
-                                    alignSelf: "center",
-                                }}
-                            >
-                                <FastImage
-                                    style={{
-                                        width: deviceWidth - 40,
-                                        aspectRatio: 3 / 2,
-                                        resizeMode: "contain",
-                                    }}
-                                    source={{
-                                        uri:
-                                            "https://lh3.googleusercontent.com/proxy/zjKxhm2ElKvbaR-2aTWEuWdpDp4GRnEZTX2s-sFY1DFC2GYSeGabtZ8OwSiAf_QTL7oTqZFBBl77vv6UlqsD",
-                                    }}
-                                />
-                            </View>
-                        </View>
-                    </View>
-                )}
-                <View style={{margin: 20, flexDirection: "column"}}>
-                    {/* <View style={{marginBottom: 10}}>
+        {loading && <Loader />}
+        {!loading && (
+          <View style={{ flex: 1, flexDirection: "column" }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                // backgroundColor: themeColor,
+              }}
+            >
+              <View
+                style={{
+                  marginVertical: 20,
+                  width: deviceWidth - 40,
+                  alignItems: "center",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  alignSelf: "center",
+                }}
+              >
+                <FastImage
+                  style={{
+                    width: deviceWidth - 40,
+                    aspectRatio: 3 / 2,
+                    resizeMode: "contain",
+                  }}
+                  source={{
+                    uri:
+                      "https://lh3.googleusercontent.com/proxy/zjKxhm2ElKvbaR-2aTWEuWdpDp4GRnEZTX2s-sFY1DFC2GYSeGabtZ8OwSiAf_QTL7oTqZFBBl77vv6UlqsD",
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+        <View style={{ margin: 20, flexDirection: "column" }}>
+          {/* <View style={{marginBottom: 10}}>
                                 <CustomText
                                     style={{
                                         color: theme.styles.global.fontColor,
@@ -276,36 +369,32 @@ class AudioPlayer extends Component {
                                     )}
                                 </CustomText>
                             </View> */}
-                    {/* <Progress /> */}
-                    <Progress />
-                    <View style={{flexDirection: "row", marginTop: 20}}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flex: 1,
-                            }}
-                        >
-                            <TouchableOpacity
-                                onPress={async () => {
-                                    const position = await TrackPlayer.getPosition();
-                                    TrackPlayer.seekTo(position - 5);
-                                }}
-                                activeOpacity={1}
-                                style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    marginRight: 20,
-                                }}
-                            >
-                                <Feather1s
-                                    color={themeColor}
-                                    size={25}
-                                    name={"rotate-ccw"}
-                                />
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity
+          {/* <Progress /> */}
+          <Progress />
+          <View style={{ flexDirection: "row", marginTop: 20 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+              }}
+            >
+              <TouchableOpacity
+                onPress={async () => {
+                  const position = await TrackPlayer.getPosition();
+                  TrackPlayer.seekTo(position - 5);
+                }}
+                activeOpacity={1}
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: 20,
+                }}
+              >
+                <Feather1s color={themeColor} size={25} name={"rotate-ccw"} />
+              </TouchableOpacity>
+              {/* <TouchableOpacity
                                 onPress={() => {
                                     TrackPlayer.skipToPrevious();
                                 }}
@@ -322,21 +411,21 @@ class AudioPlayer extends Component {
                                     name={"skip-back"}
                                 />
                             </TouchableOpacity> */}
-                            <TouchableOpacity
-                                onPress={this.toggleMainButton}
-                                activeOpacity={1}
-                                style={{
-                                    height: 60,
-                                    width: 60,
-                                    borderRadius: 30,
-                                    backgroundColor: themeColor,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                {this.getMainButtonIcon()}
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity
+              <TouchableOpacity
+                onPress={this.toggleMainButton}
+                activeOpacity={1}
+                style={{
+                  height: 60,
+                  width: 60,
+                  borderRadius: 30,
+                  backgroundColor: themeColor,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {this.getMainButtonIcon()}
+              </TouchableOpacity>
+              {/* <TouchableOpacity
                                 onPress={() => {
                                     TrackPlayer.skipToNext();
                                 }}
@@ -353,45 +442,41 @@ class AudioPlayer extends Component {
                                     name={"skip-forward"}
                                 />
                             </TouchableOpacity> */}
-                            <TouchableOpacity
-                                onPress={async () => {
-                                    const position = await TrackPlayer.getPosition();
-                                    TrackPlayer.seekTo(position + 5);
-                                }}
-                                activeOpacity={1}
-                                style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    marginLeft: 20,
-                                }}
-                            >
-                                <Feather1s
-                                    color={themeColor}
-                                    size={25}
-                                    name={"rotate-cw"}
-                                />
-                                {/*<Image*/}
-                                {/*    source={require('../../image/icons/video-icons/rotate-cw.png')}*/}
-                                {/*    resizeMode={'contain'}*/}
-                                {/*    style={{*/}
-                                {/*        tintColor: theme.styles.global.fontColor,*/}
-                                {/*        width: 25,*/}
-                                {/*        height: 25,*/}
-                                {/*    }}*/}
-                                {/*/>*/}
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
+              <TouchableOpacity
+                onPress={async () => {
+                  const position = await TrackPlayer.getPosition();
+                  TrackPlayer.seekTo(position + 5);
+                }}
+                activeOpacity={1}
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginLeft: 20,
+                }}
+              >
+                <Feather1s color={themeColor} size={25} name={"rotate-cw"} />
+                {/*<Image*/}
+                {/*    source={require('../../image/icons/video-icons/rotate-cw.png')}*/}
+                {/*    resizeMode={'contain'}*/}
+                {/*    style={{*/}
+                {/*        tintColor: theme.styles.global.fontColor,*/}
+                {/*        width: 25,*/}
+                {/*        height: 25,*/}
+                {/*    }}*/}
+                {/*/>*/}
+              </TouchableOpacity>
             </View>
-        );
-    }
+          </View>
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
+  container: {
+    flex: 1,
+  },
 });
 
 // const mapStateToProps = (state) => {
