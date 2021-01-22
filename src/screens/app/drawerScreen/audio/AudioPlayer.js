@@ -7,17 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Slider from "@react-native-community/slider";
 import TrackPlayer, { ProgressComponent } from "react-native-track-player";
 import FastImage from "react-native-fast-image";
 import Feather1s from "react-native-vector-icons/Feather";
-//import {connect} from "react-redux";
-//import AppConstant from "../../constants/AppConstant";
 import { globalWidth, themeColor } from "../../../../constants/Dimensions";
 import { WrappedText, Header } from "../../../components";
-//import {getNameFromNewsCategories} from "../../utils";
 import * as RNProgress from "react-native-progress";
 import Axios from "axios";
-//import {destroyPlaylist} from "../../actions/playlistActions";
 import parser from "subtitles-parser";
 let deviceWidth = Dimensions.get("window").width;
 
@@ -28,23 +25,21 @@ class Progress extends ProgressComponent {
     this.index = 0;
   }
   getFormattedString(position) {
-    const date = new Date(0);
-    date.setSeconds(position);
-    const timeString = date.toISOString().substr(14, 5);
-    return timeString;
+    // const date = new Date(0);
+    // date.setSeconds(position);
+    // const timeString = date.toISOString().substr(14, 5);
+    // return timeString;
+
+    return new Date(position * 1000).toISOString().substr(11, 8);
   }
   matchSubtitleFile(time) {
     const { currentSubTitle } = this.state;
-    console.log(currentSubTitle, time);
+
     if (!currentSubTitle || Object.keys(currentSubTitle).length == 0) {
       const nextSubtitle = this.subtitleFile.find(({ startTime, endTime }) => {
         return time >= startTime && time <= endTime;
       });
-      console.log(
-        "next Subtitle =>",
-        nextSubtitle,
-        this.subtitleFile[this.subtitleFile.length - 1]
-      );
+
       if (nextSubtitle) {
         this.setState({ currentSubTitle: nextSubtitle });
       }
@@ -53,9 +48,6 @@ class Progress extends ProgressComponent {
 
       if (time >= startTime && time <= endTime) {
       } else {
-        // const nextSubTitle = this.subtitleFile[this.index + 1];
-        // this.index++;
-        // this.setState({ currentSubTitle: nextSubTitle });
         const nextSubtitle = this.subtitleFile.find(
           ({ startTime, endTime }) => {
             return time >= startTime && time <= endTime;
@@ -64,10 +56,6 @@ class Progress extends ProgressComponent {
         if (nextSubtitle) {
           this.setState({ currentSubTitle: nextSubtitle });
         }
-        // this.setState({
-        //   currentSubTitle: this.state.subtitleFile[index + 1],
-        //   index: index + 1,
-        // });
       }
     }
   }
@@ -99,7 +87,7 @@ class Progress extends ProgressComponent {
       this.state.duration !== 0 && this.state.position / this.state.duration;
     const positionString = this.getFormattedString(this.state.position);
     const durationString = this.getFormattedString(this.state.duration);
-    //console.log(this.state);
+    console.log(this.state.duration, this.state.position);
 
     return (
       <View style={{ marginTop: 10 }}>
@@ -110,10 +98,10 @@ class Progress extends ProgressComponent {
                 this.state.currentSubTitle["text"]) ||
               ""
             }
-            textStyle={{ color: "#000000" }}
+            textStyle={{ color: "#000000", alignSelf: "center" }}
           />
         </View>
-        <RNProgress.Bar
+        {/* <RNProgress.Bar
           height={2}
           color={themeColor}
           borderColor={themeColor}
@@ -121,6 +109,19 @@ class Progress extends ProgressComponent {
           width={globalWidth * 9}
           useNativeDriver={true}
           animationType={"timing"}
+        /> */}
+        <Slider
+          style={{ width: "100%", height: 40 }}
+          minimumValue={0}
+          value={progress || 0}
+          onSlidingComplete={(value) => {
+            console.log(this.state.duration * value, value);
+            TrackPlayer.seekTo(this.state.duration * value);
+          }}
+          maximumValue={1}
+          minimumTrackTintColor={themeColor}
+          maximumTrackTintColor="#000000"
+          thumbTintColor={themeColor}
         />
         <View style={{ marginTop: 4, flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
@@ -146,8 +147,6 @@ class AudioPlayer extends Component {
   }
 
   toggleMainButton() {
-    //const playerState = this.props.playlistState.playerState;
-    //console.log(playerState);
     const { play } = this.state;
     if (!play) {
       TrackPlayer.play();
@@ -219,34 +218,7 @@ class AudioPlayer extends Component {
             TrackPlayer.destroy();
           }}
         />
-        {/* <PolbolHeader
-                    type={"back"}
-                    headerText={selectedLanguage.audio}
-                    navigation={this.props.navigation}
-                    rightComponent={
-                        <TouchableOpacity
-                            onPress={async () => {
-                                TrackPlayer.pause();
-                                await TrackPlayer.destroy();
-                                this.props.destroyPlaylist();
-                                this.props.navigation.goBack();
-                            }}
-                            activeOpacity={1}
-                            style={{
-                                alignItems: "center",
-                                justifyContent: "center",
-                                marginLeft: 20,
-                            }}
-                        >
-                            <Feather1s
-                                size={30}
-                                color={theme.styles.global.fontColor}
-                                name={"x"}
-                            />
-                        </TouchableOpacity>
-                    }const loading =
-        //     playlistState.tracks.length === 0 || currentTrack === null;
-                /> */}
+
         {loading && <Loader />}
         {!loading && (
           <View style={{ flex: 1, flexDirection: "column" }}>
