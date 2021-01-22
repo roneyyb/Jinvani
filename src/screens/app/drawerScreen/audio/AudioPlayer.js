@@ -105,6 +105,7 @@ class Progress extends ProgressComponent {
   constructor(props) {
     super(props);
     this.fetchSrt();
+    this.index = 0;
   }
   getFormattedString(position) {
     const date = new Date(0);
@@ -112,34 +113,29 @@ class Progress extends ProgressComponent {
     const timeString = date.toISOString().substr(14, 5);
     return timeString;
   }
-
-  setSubTitle = () => {
-    this.setState((state) => {
-      return {
-        currentSubTitle: state.subtitleFile[this.index + 1],
-      };
-    });
-    this.index++;
-  };
-  matchSubtitleFile = (time) => {
-    console.log(time);
+  matchSubtitleFile(time) {
     const { currentSubTitle, index, subtitleFile } = this.state;
-    console.log(currentSubTitle, index, subtitleFile[0]);
     if (
       !currentSubTitle &&
       time >= subtitleFile[0].startTime &&
       time <= subtitleFile[0].endTime
     ) {
       this.setState({ currentSubTitle: this.state.subtitleFile[index] });
-    } else if (currentSubTitle) {
+    } else {
       const { startTime, endTime } = currentSubTitle;
 
       if (time >= startTime && time <= endTime) {
       } else {
-        this.setSubTitle();
+        const nextSubTitle = this.state.subtitleFile[this.index + 1];
+        this.index++;
+        this.setState({ currentSubTitle: nextSubTitle });
+        // this.setState({
+        //   currentSubTitle: this.state.subtitleFile[index + 1],
+        //   index: index + 1,
+        // });
       }
     }
-  };
+  }
   fetchSrt = async () => {
     const srt = await Axios.get(
       "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
@@ -148,20 +144,18 @@ class Progress extends ProgressComponent {
     const data = parser.fromSrt(srt.data, true);
     this.setState({
       subtitleFile: data,
-
-      currentSubTitle: undefined,
+      index: 0,
+      currentSubTitle: {},
       subTitleLoaded: true,
     });
-    this.index = 0;
-    console.log(data.length, data[0], data[1], data[2]);
   };
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (
-      this.state.subTitleLoaded &&
+      this.state.subtitleLoaded &&
       prevState.position != this.state.position
     ) {
-      this.matchSubtitleFile(this.state.position * 1000);
+      this.matchSubtitleFile(this.state.position);
     }
   }
 
