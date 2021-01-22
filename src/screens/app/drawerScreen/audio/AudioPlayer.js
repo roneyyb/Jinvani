@@ -21,86 +21,6 @@ import Axios from "axios";
 import parser from "subtitles-parser";
 let deviceWidth = Dimensions.get("window").width;
 
-// class Progress extends ProgressComponent {
-//     getFormattedString(position) {
-//         const date = new Date(0);
-//         date.setSeconds(position);
-//         const timeString = date.toISOString().substr(14, 5);
-//         return timeString;
-//     }
-
-//     // matchSubtitleFile(time) {
-//     //     const {currentSubTitle, index, subtitleFile} = this.state;
-//     //     if (
-//     //         !currentSubTitle &&
-//     //         time >= subtitleFile[0].startTime &&
-//     //         time <= subtitleFile[0].endTime
-//     //     ) {
-//     //         this.setState({currentSubTitle: this.state.subtitleFile[index]});
-//     //     } else {
-//     //         const {startTime, endTime} = currentSubTitle;
-
-//     //         if (time >= startTime && time <= endTime) {
-//     //         } else {
-//     //             this.setState({
-//     //                 currentSubTitle: this.state.subtitleFile[index + 1],
-//     //                 index: index + 1,
-//     //             });
-//     //         }
-//     //     }
-//     // }
-
-//     fetchSrt = async () => {
-//         const srt = await Axios.get(
-//             "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt",
-//         );
-//         //console.log(typeof srt.data, srt.data.length);
-//         const data = parser.fromSrt(srt.data, true);
-//         //this.setState({subtitleFile: data, index: 0, currentSubTitle: {}});
-
-//         //console.log(data.length, data[0], data[1], data[2]);
-//     };
-
-//     componentDidMount() {
-//         this.fetchSrt();
-//     }
-//     render() {
-//         const progress =
-//             this.state.duration !== 0 &&
-//             this.state.position / this.state.duration;
-//         const positionString = this.getFormattedString(this.state.position);
-//         const durationString = this.getFormattedString(this.state.duration);
-//         console.log(progress, positionString, durationString);
-//         console.log(this.state);
-//         return (
-//             <View style={{marginTop: 10}}>
-//                 <RNProgress.Bar
-//                     height={2}
-//                     color={themeColor}
-//                     borderColor={themeColor}
-//                     progress={progress}
-//                     width={globalWidth * 9}
-//                     useNativeDriver={true}
-//                     animationType={"timing"}
-//                 />
-//                 <View style={{marginTop: 4, flexDirection: "row"}}>
-//                     <View style={{flex: 1}}>
-//                         <WrappedText
-//                             style={{color: themeColor}}
-//                             text={positionString}
-//                         />
-//                     </View>
-//                     <View>
-//                         <WrappedText
-//                             style={{color: themeColor}}
-//                             text={durationString}
-//                         />
-//                     </View>
-//                 </View>
-//             </View>
-//         );
-//     }
-// }
 class Progress extends ProgressComponent {
   constructor(props) {
     super(props);
@@ -114,21 +34,36 @@ class Progress extends ProgressComponent {
     return timeString;
   }
   matchSubtitleFile(time) {
-    const { currentSubTitle, index, subtitleFile } = this.state;
-    if (
-      !currentSubTitle &&
-      time >= subtitleFile[0].startTime &&
-      time <= subtitleFile[0].endTime
-    ) {
-      this.setState({ currentSubTitle: this.state.subtitleFile[index] });
-    } else {
+    const { currentSubTitle } = this.state;
+    console.log(currentSubTitle, time);
+    if (!currentSubTitle || Object.keys(currentSubTitle).length == 0) {
+      const nextSubtitle = this.subtitleFile.find(({ startTime, endTime }) => {
+        return time >= startTime && time <= endTime;
+      });
+      console.log(
+        "next Subtitle =>",
+        nextSubtitle,
+        this.subtitleFile[this.subtitleFile.length - 1]
+      );
+      if (nextSubtitle) {
+        this.setState({ currentSubTitle: nextSubtitle });
+      }
+    } else if (currentSubTitle) {
       const { startTime, endTime } = currentSubTitle;
 
       if (time >= startTime && time <= endTime) {
       } else {
-        const nextSubTitle = this.state.subtitleFile[this.index + 1];
-        this.index++;
-        this.setState({ currentSubTitle: nextSubTitle });
+        // const nextSubTitle = this.subtitleFile[this.index + 1];
+        // this.index++;
+        // this.setState({ currentSubTitle: nextSubTitle });
+        const nextSubtitle = this.subtitleFile.find(
+          ({ startTime, endTime }) => {
+            return time >= startTime && time <= endTime;
+          }
+        );
+        if (nextSubtitle) {
+          this.setState({ currentSubTitle: nextSubtitle });
+        }
         // this.setState({
         //   currentSubTitle: this.state.subtitleFile[index + 1],
         //   index: index + 1,
@@ -142,9 +77,9 @@ class Progress extends ProgressComponent {
     );
     //console.log(typeof srt.data, srt.data.length);
     const data = parser.fromSrt(srt.data, true);
+    this.subtitleFile = data;
+    this.index = 0;
     this.setState({
-      subtitleFile: data,
-      index: 0,
       currentSubTitle: {},
       subTitleLoaded: true,
     });
@@ -152,10 +87,10 @@ class Progress extends ProgressComponent {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.state.subtitleLoaded &&
+      this.state.subTitleLoaded &&
       prevState.position != this.state.position
     ) {
-      this.matchSubtitleFile(this.state.position);
+      this.matchSubtitleFile(this.state.position * 1000);
     }
   }
 
@@ -171,7 +106,9 @@ class Progress extends ProgressComponent {
         <View>
           <WrappedText
             text={
-              (this.state.subtitleFile && this.state.subtitleFile["text"]) || ""
+              (this.state.currentSubTitle &&
+                this.state.currentSubTitle["text"]) ||
+              ""
             }
             textStyle={{ color: "#000000" }}
           />
