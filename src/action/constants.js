@@ -3,6 +3,7 @@ export const DESTROY_STATE = "destroy_state";
 //Track Player
 export const SAVE_PLAYLIST = "SAVE_PLAYLIST";
 export const SET_TRACK = "SET_TRACK";
+export const SET_LOADER = "SET_LOADER";
 export const SET_PLAYER_STATE = "SET_PLAYER_STATE";
 export const TRACK_FETCH_START = "TRACK_FETCH_START";
 export const TRACK_FETCH_SUCCESS = "TRACK_FETCH_SUCCESS";

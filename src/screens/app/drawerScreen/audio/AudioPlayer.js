@@ -16,6 +16,7 @@ import { WrappedText, Header } from "../../../components";
 import * as RNProgress from "react-native-progress";
 import Axios from "axios";
 import parser from "subtitles-parser";
+import { connect } from "react-redux";
 let deviceWidth = Dimensions.get("window").width;
 
 class Progress extends ProgressComponent {
@@ -25,11 +26,6 @@ class Progress extends ProgressComponent {
     this.index = 0;
   }
   getFormattedString(position) {
-    // const date = new Date(0);
-    // date.setSeconds(position);
-    // const timeString = date.toISOString().substr(14, 5);
-    // return timeString;
-
     return new Date(position * 1000).toISOString().substr(11, 8);
   }
   matchSubtitleFile(time) {
@@ -60,9 +56,7 @@ class Progress extends ProgressComponent {
     }
   }
   fetchSrt = async () => {
-    const srt = await Axios.get(
-      "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
-    );
+    const srt = await Axios.get(this.props.docsUrl);
     //console.log(typeof srt.data, srt.data.length);
     const data = parser.fromSrt(srt.data, true);
     this.subtitleFile = data;
@@ -145,21 +139,21 @@ class AudioPlayer extends Component {
     super(props);
     this.toggleMainButton = this.toggleMainButton.bind(this);
   }
-
   toggleMainButton() {
-    const { play } = this.state;
-    if (!play) {
+    const playerState = this.props.playerState;
+    console.log(playerState);
+    if (playerState === TrackPlayer.STATE_PAUSED) {
       TrackPlayer.play();
-    } else {
+    } else if (playerState === TrackPlayer.STATE_PLAYING) {
       TrackPlayer.pause();
+    } else {
+      console.log("Nothing to Do.");
     }
-
-    this.setState({ play: !play });
   }
 
   getMainButtonIcon() {
-    //const playerState = this.props.playlistState.playerState;
-    if (!this.state.play) {
+    const playerState = this.props.playerState;
+    if (playerState === TrackPlayer.STATE_PAUSED) {
       return (
         <Feather1s
           style={{ marginLeft: 4, color: "white" }}
@@ -167,22 +161,11 @@ class AudioPlayer extends Component {
           name={"play"}
         />
       );
-    } else {
+    } else if (playerState === TrackPlayer.STATE_PLAYING) {
       return <Feather1s style={{ color: "white" }} size={30} name={"pause"} />;
+    } else {
+      return <RNProgress.CircleSnail color={"white"} />;
     }
-  }
-
-  fetchSrt = async () => {
-    const srt = await Axios.get(
-      "https://jinvani.s3.ap-south-1.amazonaws.com/Kesari-2019-Hindi-Proper-720p-HDRip-x264.srt"
-    );
-    console.log(typeof srt.data, srt.data.length);
-    const data = parser.fromSrt(srt.data, true);
-    console.log(data.length, data[0]);
-  };
-
-  componentDidMount() {
-    this.fetchSrt();
   }
 
   render() {
@@ -213,9 +196,9 @@ class AudioPlayer extends Component {
             borderBottomWidth: 0.5,
             borderColor: "#2222",
           }}
-          onPress={() => {
+          onPress={async () => {
             this.props.navigation.goBack();
-            TrackPlayer.destroy();
+            await TrackPlayer.destroy();
           }}
         />
 
@@ -279,7 +262,7 @@ class AudioPlayer extends Component {
                                 </CustomText>
                             </View> */}
           {/* <Progress /> */}
-          <Progress />
+          <Progress docsUrl={this.props.subTitleUrl} />
           <View style={{ flexDirection: "row", marginTop: 20 }}>
             <View
               style={{
@@ -388,17 +371,16 @@ const styles = StyleSheet.create({
   },
 });
 
-// const mapStateToProps = (state) => {
-//     return {
-//         selectedLanguage: state.language,
-//         playlistState: state.playlist,
-//         newsById: state.news.byIds,
-//         theme: state.theme,
-//     };
-// };
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    subTitleUrl: state.track.subTitleUrl,
+    playerState: state.track.playerState,
+  };
+};
 
 // export default connect(mapStateToProps, {
 //     destroyPlaylist,
 // })(NewsPlayer);
 
-export default AudioPlayer;
+export default connect(mapStateToProps, {})(AudioPlayer);
