@@ -9,6 +9,7 @@ const INITIAL_STATE = {
 };
 
 const track = produce((draft, action) => {
+  console.log(action);
   switch (action.type) {
     case SET_PLAYER_STATE:
       draft.playerState = action.payload;

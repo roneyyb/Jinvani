@@ -1,6 +1,7 @@
 import TrackPlayer from "react-native-track-player";
 import { apiHandler, routeNames } from "../server/apiHandler";
 import { SET_TRACK, SET_PLAYER_STATE, SET_LOADER } from "./constants";
+import { useDispatch } from "react-redux";
 
 const setupPlayer = async () => {
   await TrackPlayer.setupPlayer();
@@ -18,11 +19,11 @@ const setupPlayer = async () => {
       TrackPlayer.CAPABILITY_PAUSE,
     ],
     notificationCapabilities: [
-      //TrackPlayer.CAPABILITY_PLAY,
-      //TrackPlayer.CAPABILITY_PAUSE,
+      TrackPlayer.CAPABILITY_PLAY,
+      TrackPlayer.CAPABILITY_PAUSE,
       // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
       // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-      //TrackPlayer.CAPABILITY_STOP,
+      TrackPlayer.CAPABILITY_STOP,
     ],
   });
 };
@@ -42,8 +43,8 @@ const setTracks = async (audioData) => {
   await TrackPlayer.play();
 };
 
-export const generatePlaylist = (audioUID, callBack) => {
-  return async (dispatch) => {
+export const generatePlaylist = (audioUID, callBack, dispatch) => {
+  return async () => {
     try {
       dispatch({ type: SET_LOADER, payload: true });
       const response = await apiHandler(routeNames.FetchAudio, audioUID);
@@ -55,12 +56,16 @@ export const generatePlaylist = (audioUID, callBack) => {
 
         dispatch({
           type: SET_TRACK,
-          payload: response.data.docsURL,
+          payload: response.data.audioData.docsURL,
         });
         dispatch({
           type: SET_LOADER,
           payload: false,
         });
+        // dispatch({
+        //   type: SET_PLAYER_STATE,
+        //   payload: TrackPlayer.STATE_PLAYING,
+        // });
         callBack();
       } else {
         throw new Error("Error in Setting up Track Player");

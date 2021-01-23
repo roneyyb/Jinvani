@@ -12,7 +12,7 @@ import TrackPlayer, { ProgressComponent } from "react-native-track-player";
 import FastImage from "react-native-fast-image";
 import Feather1s from "react-native-vector-icons/Feather";
 import { globalWidth, themeColor } from "../../../../constants/Dimensions";
-import { WrappedText, Header } from "../../../components";
+import { WrappedText, Header, Loader } from "../../../components";
 import * as RNProgress from "react-native-progress";
 import Axios from "axios";
 import parser from "subtitles-parser";
@@ -95,15 +95,7 @@ class Progress extends ProgressComponent {
             textStyle={{ color: "#000000", alignSelf: "center" }}
           />
         </View>
-        {/* <RNProgress.Bar
-          height={2}
-          color={themeColor}
-          borderColor={themeColor}
-          progress={progress}
-          width={globalWidth * 9}
-          useNativeDriver={true}
-          animationType={"timing"}
-        /> */}
+
         <Slider
           style={{ width: "100%", height: 40 }}
           minimumValue={0}
@@ -133,6 +125,7 @@ class AudioPlayer extends Component {
   state = {
     track: {},
     play: true,
+    loading: false,
   };
 
   constructor(props) {
@@ -143,15 +136,17 @@ class AudioPlayer extends Component {
     const playerState = this.props.playerState;
     console.log(playerState);
     if (playerState === TrackPlayer.STATE_PAUSED) {
+      this.setState({ play: true });
       TrackPlayer.play();
     } else if (playerState === TrackPlayer.STATE_PLAYING) {
+      this.setState({ play: false });
       TrackPlayer.pause();
     } else {
       console.log("Nothing to Do.");
     }
   }
 
-  getMainButtonIcon() {
+  getMainButtonIcon = () => {
     const playerState = this.props.playerState;
     if (playerState === TrackPlayer.STATE_PAUSED) {
       return (
@@ -164,9 +159,11 @@ class AudioPlayer extends Component {
     } else if (playerState === TrackPlayer.STATE_PLAYING) {
       return <Feather1s style={{ color: "white" }} size={30} name={"pause"} />;
     } else {
-      return <RNProgress.CircleSnail color={"white"} />;
+      return <ActivityIndicator color={"#ffffff"} />;
     }
-  }
+  };
+
+  componentDidUpdate() {}
 
   render() {
     // const {selectedLanguage, playlistState, theme} = this.props;
@@ -174,7 +171,7 @@ class AudioPlayer extends Component {
     // console.log(currentTrack);
     // const loading =
     //     playlistState.tracks.length === 0 || currentTrack === null;
-    const loading = false;
+
     // let trackInfo = this.props.newsById[currentTrack] || {
     //     images: [],
     //     categories: [],
@@ -198,12 +195,12 @@ class AudioPlayer extends Component {
           }}
           onPress={async () => {
             this.props.navigation.goBack();
+            this.setState({ loading: true });
             await TrackPlayer.destroy();
           }}
         />
 
-        {loading && <Loader />}
-        {!loading && (
+        {!this.state.loading && (
           <View style={{ flex: 1, flexDirection: "column" }}>
             <View
               style={{
@@ -230,7 +227,7 @@ class AudioPlayer extends Component {
                   }}
                   source={{
                     uri:
-                      "https://lh3.googleusercontent.com/proxy/zjKxhm2ElKvbaR-2aTWEuWdpDp4GRnEZTX2s-sFY1DFC2GYSeGabtZ8OwSiAf_QTL7oTqZFBBl77vv6UlqsD",
+                      "https://i1.wp.com/gajabkhabar.com/wp-content/uploads/2016/01/Lord-Mahavira.jpg?resize=640%2C409",
                   }}
                 />
               </View>
@@ -238,30 +235,6 @@ class AudioPlayer extends Component {
           </View>
         )}
         <View style={{ margin: 20, flexDirection: "column" }}>
-          {/* <View style={{marginBottom: 10}}>
-                                <CustomText
-                                    style={{
-                                        color: theme.styles.global.fontColor,
-                                        fontSize: 18,
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {trackInfo.headline}
-                                </CustomText>
-                                <CustomText
-                                    style={{
-                                        textAlign: "center",
-                                        color: theme.styles.global.fontColor,
-                                        marginTop: 2,
-                                    }}
-                                >
-                                    {getNameFromNewsCategories(
-                                        trackInfo.categories,
-                                        selectedLanguage,
-                                    )}
-                                </CustomText>
-                            </View> */}
-          {/* <Progress /> */}
           <Progress docsUrl={this.props.subTitleUrl} />
           <View style={{ flexDirection: "row", marginTop: 20 }}>
             <View
@@ -272,37 +245,6 @@ class AudioPlayer extends Component {
                 flex: 1,
               }}
             >
-              <TouchableOpacity
-                onPress={async () => {
-                  const position = await TrackPlayer.getPosition();
-                  TrackPlayer.seekTo(position - 5);
-                }}
-                activeOpacity={1}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginRight: 20,
-                }}
-              >
-                <Feather1s color={themeColor} size={25} name={"rotate-ccw"} />
-              </TouchableOpacity>
-              {/* <TouchableOpacity
-                                onPress={() => {
-                                    TrackPlayer.skipToPrevious();
-                                }}
-                                activeOpacity={1}
-                                style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    marginRight: 20,
-                                }}
-                            >
-                                <Feather1s
-                                    color={themeColor}
-                                    size={25}
-                                    name={"skip-back"}
-                                />
-                            </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={this.toggleMainButton}
                 activeOpacity={1}
@@ -317,49 +259,10 @@ class AudioPlayer extends Component {
               >
                 {this.getMainButtonIcon()}
               </TouchableOpacity>
-              {/* <TouchableOpacity
-                                onPress={() => {
-                                    TrackPlayer.skipToNext();
-                                }}
-                                activeOpacity={1}
-                                style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    marginLeft: 20,
-                                }}
-                            >
-                                <Feather1s
-                                    color={themeColor}
-                                    size={25}
-                                    name={"skip-forward"}
-                                />
-                            </TouchableOpacity> */}
-              <TouchableOpacity
-                onPress={async () => {
-                  const position = await TrackPlayer.getPosition();
-                  TrackPlayer.seekTo(position + 5);
-                }}
-                activeOpacity={1}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginLeft: 20,
-                }}
-              >
-                <Feather1s color={themeColor} size={25} name={"rotate-cw"} />
-                {/*<Image*/}
-                {/*    source={require('../../image/icons/video-icons/rotate-cw.png')}*/}
-                {/*    resizeMode={'contain'}*/}
-                {/*    style={{*/}
-                {/*        tintColor: theme.styles.global.fontColor,*/}
-                {/*        width: 25,*/}
-                {/*        height: 25,*/}
-                {/*    }}*/}
-                {/*/>*/}
-              </TouchableOpacity>
             </View>
           </View>
         </View>
+        {this.state.loading && <Loader />}
       </View>
     );
   }
@@ -372,7 +275,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     subTitleUrl: state.track.subTitleUrl,
     playerState: state.track.playerState,

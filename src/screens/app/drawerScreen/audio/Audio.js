@@ -4,14 +4,14 @@ import { apiHandler, routeNames } from "../../../../server/apiHandler";
 import { Loader, Header } from "../../../components";
 import CategoryComponent from "./component/CategoryComponent";
 import { generatePlaylist } from "../../../../action/trackAction";
-import { useDispatch, connect } from "react-redux";
+import { useDispatch, connect, useSelector } from "react-redux";
 
 const Audio = (props) => {
   const [isLoading, setLoader] = useState(false);
   const [category, setCategory] = useState([]);
   const [error, setError] = useState({});
   const dispatch = useDispatch();
-  console.log(dispatch);
+  const loading = useSelector((state) => state.track.loading);
   const onCategoryPress = async (item) => {
     try {
       const { category, mainListUID } = item;
@@ -24,9 +24,13 @@ const Audio = (props) => {
         console.log(audioID);
         setLoader(true);
         dispatch(
-          generatePlaylist(audioID.audioUID, () => {
-            props.navigation.navigate("audioPlayer");
-          })
+          generatePlaylist(
+            audioID.audioUID,
+            () => {
+              props.navigation.navigate("audioPlayer");
+            },
+            dispatch
+          )
         );
         setLoader(false);
       }
@@ -80,11 +84,16 @@ const Audio = (props) => {
         }}
         keyExtractor={(index) => index.mainListUID}
       />
-      {props.loader || isLoading ? <Loader /> : <View />}
+      {loading || isLoading ? <Loader /> : <View />}
     </View>
   );
 };
 
-export default connect((state) => {
-  return { loader: state.track.loader };
-})(Audio);
+const mapStateToProps = (props) => {
+  console.log(props);
+  return {
+    loading: props.loading,
+  };
+};
+
+export default connect(mapStateToProps)(Audio);

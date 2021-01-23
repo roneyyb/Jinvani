@@ -24,5 +24,5 @@ export default function App() {
 }
 
 TrackPlayer.registerPlaybackService(() =>
-  require("./src/onStart/TrackInit").bind(null)
+  require("./src/onStart/TrackInit").bind(null, store)
 );
