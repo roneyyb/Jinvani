@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  BackHandler,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import TrackPlayer, { ProgressComponent } from "react-native-track-player";
@@ -164,6 +165,18 @@ class AudioPlayer extends Component {
   };
 
   componentDidUpdate() {}
+
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      async function () {
+        await TrackPlayer.destroy();
+      }
+    );
+  }
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
 
   render() {
     // const {selectedLanguage, playlistState, theme} = this.props;

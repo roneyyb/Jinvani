@@ -74,6 +74,10 @@ export const generatePlaylist = (audioUID, callBack, dispatch) => {
       }
     } catch (error) {
       console.log(error);
+      dispatch({
+        type: SET_LOADER,
+        payload: false,
+      });
       throw new Error(error);
     }
   };
