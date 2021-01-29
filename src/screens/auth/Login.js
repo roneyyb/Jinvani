@@ -18,12 +18,13 @@ class Login extends Component {
   };
 
   sendDetailsToServer = async (phone) => {
+    console.log(phone);
     try {
       this.setState({ isLoading: true });
       const response = await apiHandler(routeNames.Otp, {
         mobileNo: phone.toString(),
       });
-
+      console.log("response from server", response);
       if (response.success) {
         this.setState({ isLoading: false });
         this.props.navigation.replace("otpScreen", {
