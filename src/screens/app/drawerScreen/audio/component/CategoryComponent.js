@@ -16,7 +16,7 @@ const CategoryComponent = ({ item, onPress }) => {
       }}
       style={{
         height: globalHeight,
-
+        backgroundColor: "#ffffff",
         marginTop: globalHeight * 0.1,
         paddingLeft: "5%",
         width: "100%",

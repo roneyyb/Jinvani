@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList } from "react-native";
 import { apiHandler, routeNames } from "../../../../server/apiHandler";
-import { Loader, Header } from "../../../components";
+import { Loader, Header, WrappedText } from "../../../components";
 import CategoryComponent from "./component/CategoryComponent";
 import { generatePlaylist } from "../../../../action/trackAction";
 import { useDispatch, connect, useSelector } from "react-redux";
+import { WheelPicker as Picker } from "react-native-wheel-picker-android";
+import { globalHeight, globalWidth } from "../../../../constants/Dimensions";
 
 const Audio = (props) => {
   const [isLoading, setLoader] = useState(false);
   const [category, setCategory] = useState([]);
   const [error, setError] = useState({});
   const dispatch = useDispatch();
+  const [index, selectedIndex] = useState(0);
+  const itemList = ["🟠", "🟠", "🟠", "🟠", "🟠", "🟠", "🟠", "🟠"];
   const loading = useSelector((state) => state.track.loading);
   const onCategoryPress = async (item) => {
     try {
@@ -57,33 +61,63 @@ const Audio = (props) => {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <View style={{ flex: 1 }}>
       <Header
         featherIcon={"list"}
         headerText={"MainList"}
         containerStyle={{
           borderBottomWidth: 0.5,
           borderColor: "#2222",
+          backgroundColor: "#ffffff",
         }}
         onPress={() => {
           props.navigation.openDrawer();
         }}
       />
-      <FlatList
-        data={category}
-        renderItem={({ item, index }) => {
-          return (
-            <CategoryComponent
-              key={index}
-              item={item}
-              onPress={() => {
-                onCategoryPress(item);
-              }}
-            />
-          );
+      <View style={{}}>
+        <FlatList
+          data={category}
+          renderItem={({ item, index }) => {
+            return (
+              <CategoryComponent
+                key={index}
+                item={item}
+                onPress={() => {
+                  onCategoryPress(item);
+                }}
+              />
+            );
+          }}
+          keyExtractor={(index) => index.mainListUID}
+        />
+      </View>
+      <View
+        style={{
+          flex: 1,
+          margin: "5%",
+          elevation: 2,
+          backgroundColor: "#ffffff",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: globalWidth * 0.5,
         }}
-        keyExtractor={(index) => index.mainListUID}
-      />
+      >
+        <WrappedText
+          text={"Samayak mala"}
+          textStyle={{ marginVertical: globalHeight * 0.2 }}
+        />
+        <Picker
+          selectedItem={index}
+          data={itemList}
+          onItemSelected={(index) => selectedIndex(index)}
+          isCyclic={true}
+          selectedItemTextColor={"#000000"}
+          indicatorColor={"#00000000"}
+          indicatorWidth={0}
+          itemTextSize={20}
+          selectedItemTextSize={20}
+        />
+      </View>
       {loading || isLoading ? <Loader /> : <View />}
     </View>
   );
