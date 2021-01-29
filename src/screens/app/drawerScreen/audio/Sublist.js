@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { generatePlaylist } from "../../../../action/trackAction";
+import { globalHeight } from "../../../../constants/Dimensions";
 import { apiHandler, routeNames } from "../../../../server/apiHandler";
 import { Loader, Header } from "../../../components";
 import CategoryComponent from "./component/CategoryComponent";
@@ -86,6 +87,7 @@ const Audio = (props) => {
           keyExtractor={(index) => {
             return index.audioUID;
           }}
+          ListFooterComponent={<View style={{ height: globalHeight }} />}
         />
       </View>
       {loader || loading ? <Loader /> : <View />}
