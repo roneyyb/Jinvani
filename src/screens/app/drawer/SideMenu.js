@@ -118,7 +118,7 @@ const SideMenu = (props) => {
               <WrappedText
                 text={
                   (userDetail &&
-                    (userDetail["lang"][0] == "H" ? "Hindi" : "English")) ||
+                    (userDetail["lang"] == "H" ? "Hindi" : "English")) ||
                   ""
                 }
                 textStyle={{ color: "#000000", fontSize: 2 * vh }}
