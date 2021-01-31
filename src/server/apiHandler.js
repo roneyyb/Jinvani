@@ -53,7 +53,7 @@ export const apiHandler = async (
       options.url = options.url + Data;
       options.data = {};
     }
-    console.log(options);
+
     const response = await axios(options);
     const x_auth_token = response.headers["x-auth-token"];
     if (x_auth_token) {
@@ -63,7 +63,7 @@ export const apiHandler = async (
       await Storage.setItem(StorageItemKeys.x_auth_token, x_auth_token);
     }
     const { data } = response;
-    console.log(response, response.data);
+
     if (data.msg == "OK") {
       return { success: true, data: data.data };
     }

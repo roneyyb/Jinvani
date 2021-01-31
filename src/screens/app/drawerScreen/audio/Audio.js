@@ -23,8 +23,9 @@ const Audio = (props) => {
   const motiCountText = ["मोती की गिनती", "Moti count"];
   const [isLoading, setLoader] = useState(false);
   const [category, setCategory] = useState([]);
-  const [showModal, setModal] = useState(false);
-  const [userDetail, setDetail] = useState(undefined);
+  const [showModal, setModal] = useState(0);
+  const [userDetail, setDetail] = useState({});
+
   const [motiCount, setMotiCount] = useState(0);
   const [malaText, setMalaText] = useState([]);
   const [error, setError] = useState({});
@@ -34,27 +35,21 @@ const Audio = (props) => {
   const loading = useSelector((state) => state.track.loading);
   const loadUserData = async () => {
     try {
-      let userDetail = await AsyncStorage.getItem("userDetail");
-
-      userDetail = JSON.parse(userDetail);
-      setDetail(userDetail);
-      if (userDetail["lang"][0] == "H") {
-        setMalaText([Mala_Text_Hindi, motiCountText[0]]);
-      } else {
-        setMalaText([Mala_Text_English, motiCountText[1]]);
-      }
-      console.log("userDetail =>", userDetail);
-      let motiCount = await AsyncStorage.getItem("motiCount");
-      setMotiCount(+motiCount || 0);
     } catch (error) {
       console.log("error =>", error);
     }
+  };
+
+  const loadMotiData = async () => {
+    let motiCount = await AsyncStorage.getItem("motiCount");
+    setMotiCount(+motiCount || 0);
   };
 
   useEffect(() => {
     setLoader(true);
     loadUserData();
     fetchCategory();
+    loadMotiData();
     return () => {
       Storage.setItem("motiCount", motiCount);
     };
@@ -62,7 +57,7 @@ const Audio = (props) => {
 
   const onCategoryPress = async (item) => {
     if (item.title == Mala_Text_Hindi || item.title == Mala_Text_English) {
-      setModal(true);
+      setModal(1);
     } else {
       try {
         const { category, mainListUID } = item;
@@ -96,12 +91,24 @@ const Audio = (props) => {
     const response = await apiHandler(routeNames.MainList);
 
     if (response.success) {
-      console.log("userDetail ====>", userDetail);
+      let userDetail = await AsyncStorage.getItem("userDetail");
+
+      userDetail = JSON.parse(userDetail);
+
+      if (userDetail["lang"][0] == "H") {
+        setMalaText([Mala_Text_Hindi, motiCountText[0]]);
+        response.data.push({
+          title: Mala_Text_Hindi,
+        });
+      } else {
+        setMalaText([Mala_Text_English, motiCountText[1]]);
+        response.data.push({
+          title: Mala_Text_English,
+        });
+      }
+
       setLoader(false);
-      response.data.push({
-        title:
-          userDetail["lang"][0] == "H" ? Mala_Text_Hindi : Mala_Text_English,
-      });
+
       setCategory(response.data);
     } else {
       setLoader(false);
@@ -142,7 +149,7 @@ const Audio = (props) => {
       </View>
 
       <Modal
-        visible={showModal}
+        visible={showModal > 0}
         transparent={false}
         animationType={"slide"}
         style={{ backgroundColor: "#ffffff33" }}
@@ -161,7 +168,7 @@ const Audio = (props) => {
           <WrappedRoundButton
             buttonSource={Cross2}
             onPress={() => {
-              setModal(false);
+              setModal(0);
             }}
             containerStyle={{
               position: "absolute",
@@ -189,7 +196,8 @@ const Audio = (props) => {
             data={itemList}
             onItemSelected={(index) => {
               //selectedIndex(index + 1);
-              setMotiCount(motiCount + 1);
+              if (showModal != 1) setMotiCount(motiCount + 1);
+              else setModal(2);
             }}
             isCyclic={true}
             selectedItemTextColor={"#000000"}

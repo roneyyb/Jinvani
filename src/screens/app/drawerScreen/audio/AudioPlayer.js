@@ -82,7 +82,6 @@ class Progress extends ProgressComponent {
       this.state.duration !== 0 && this.state.position / this.state.duration;
     const positionString = this.getFormattedString(this.state.position);
     const durationString = this.getFormattedString(this.state.duration);
-    console.log(this.state.duration, this.state.position);
 
     return (
       <View style={{ marginTop: 10 }}>
