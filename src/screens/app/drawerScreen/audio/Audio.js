@@ -42,6 +42,7 @@ const Audio = (props) => {
 
   const loadMotiData = async () => {
     let motiCount = await AsyncStorage.getItem("motiCount");
+    console.log("moti Count =>", motiCount);
     setMotiCount(+motiCount || 0);
   };
 
@@ -51,7 +52,7 @@ const Audio = (props) => {
     fetchCategory();
     loadMotiData();
     return () => {
-      Storage.setItem("motiCount", motiCount);
+      console.log("component unmounted => ", motiCount);
     };
   }, []);
 
@@ -167,8 +168,9 @@ const Audio = (props) => {
         >
           <WrappedRoundButton
             buttonSource={Cross2}
-            onPress={() => {
+            onPress={async () => {
               setModal(0);
+              await Storage.setItem("motiCount", motiCount);
             }}
             containerStyle={{
               position: "absolute",
@@ -196,8 +198,10 @@ const Audio = (props) => {
             data={itemList}
             onItemSelected={(index) => {
               //selectedIndex(index + 1);
-              if (showModal != 1) setMotiCount(motiCount + 1);
-              else setModal(2);
+              if (showModal != 1) {
+                Storage.setItem("motiCount", motiCount + 1);
+                setMotiCount(motiCount + 1);
+              } else setModal(2);
             }}
             isCyclic={true}
             selectedItemTextColor={"#000000"}

@@ -24,6 +24,7 @@ const SideMenu = (props) => {
     try {
       await AsyncStorage.removeItem("userDetail");
       await AsyncStorage.removeItem(StorageItemKeys.x_auth_token);
+      await AsyncStorage.removeItem("motiCount");
       props.navigation.replace("Auth");
     } catch (error) {
       console.log("Error while loggin out");
